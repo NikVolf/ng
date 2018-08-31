@@ -100,12 +100,16 @@ mod tests {
 
         assert_eq!(elem1 + elem2, 3.into());
         assert_eq!(elem2 + elem1, 3.into());
+
         assert_eq!(elem1 - elem2, 9.into());
         assert_eq!(elem2 - elem1, 10.into());
+
         assert_eq!(-elem1, 13.into());
         assert_eq!(-elem2, 3.into());
+
         assert_eq!(elem1*elem2, 1.into());
         assert_eq!(elem2*elem1, 1.into());
+        
         assert_eq!(elem2/elem1, 9.into());
         assert_eq!(elem1/elem2, 17.into());
      }
