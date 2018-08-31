@@ -22,3 +22,22 @@ impl ModuleNeg for u64 {
         module - (self % module)
     }
 }
+
+impl ModuleInv for u64 {
+    fn inv(self, module: Self) -> Self {
+		let mut mn = (module, self);
+		let mut xy = (0, 1);
+
+		while mn.1 != 0 {
+			let sb = (mn.0 / mn.1).mul(xy.1, module);
+			if sb > xy.0 {
+				xy = (xy.1, module - ((sb - xy.0) % module))
+			} else {
+				xy = (xy.1, xy.0 - sb)
+			}
+			mn = (mn.1, mn.0 % mn.1);
+		}
+
+		xy.0
+    }
+}

@@ -1,6 +1,6 @@
 //! Abstract field element implementation
 
-use std::ops::{Add, Mul, Neg, Sub, Rem};
+use std::ops::{Add, Mul, Neg, Sub, Div};
 use std::marker::PhantomData;
 
 use {field, arith};
@@ -49,6 +49,20 @@ impl<F: field::Field<Value=V>, V: arith::Value> Neg for FieldElement<F, V> {
     }
 }
 
+impl<F: field::Field<Value=V>, V: arith::Value> Mul for FieldElement<F, V> {
+    type Output = FieldElement<F, V>;
+    fn mul(self, other: Self) -> Self::Output {
+        self.value.mul(other.value, F::MODULUS).into()
+    }
+}
+
+impl<F: field::Field<Value=V>, V: arith::Value> Div for FieldElement<F, V> {
+    type Output = FieldElement<F, V>;
+    fn div(self, other: Self) -> Self::Output {
+        self.value.mul(other.value.inv(F::MODULUS), F::MODULUS).into()
+    }
+}
+
 impl<F: field::Field<Value=V>, V: arith::Value> From<V> for FieldElement<F, V>
 {
     fn from(val: V) -> Self {
@@ -84,14 +98,18 @@ mod tests {
 
     #[test]
     fn smoky() {
-        let elem1: FieldElement<Mod17Field, u64> = 1.into();
+        let elem1: FieldElement<Mod17Field, u64> = 6.into();
         let elem2: FieldElement<Mod17Field, u64> = 16.into();
 
-        assert_eq!(elem1 + elem2, 0.into());
-        assert_eq!(elem2 + elem1, 0.into());
-        assert_eq!(elem1 - elem2, 2.into());
-        assert_eq!(elem2 - elem1, 15.into());
-        assert_eq!(-elem1, 16.into());
+        assert_eq!(elem1 + elem2, 5.into());
+        assert_eq!(elem2 + elem1, 5.into());
+        assert_eq!(elem1 - elem2, 7.into());
+        assert_eq!(elem2 - elem1, 10.into());
+        assert_eq!(-elem1, 11.into());
         assert_eq!(-elem2, 1.into());
+        assert_eq!(elem1*elem2, 11.into());
+        assert_eq!(elem2*elem1, 11.into());
+        assert_eq!(elem2/elem1, 14.into());
+        assert_eq!(elem1/elem2, 11.into());
     }
 }
