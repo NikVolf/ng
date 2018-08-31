@@ -30,8 +30,8 @@ impl<F: field::Field<Value=V>, V: arith::Value> FieldElement<F, V> {
 
 impl<F: field::Field<Value=V>, V: arith::Value> Add for FieldElement<F, V> {
     type Output = FieldElement<F, V>;
-    fn add(mut self, other: FieldElement<F, V>) -> Self::Output {
-        ((self.value + other.value) % F::modulus()).into()
+    fn add(self, other: FieldElement<F, V>) -> Self::Output {
+        self.value.add_reduce(other.value, F::modulus()).into()
     }
 }
 
