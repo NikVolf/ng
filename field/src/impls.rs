@@ -41,3 +41,12 @@ impl ModuleInv for u64 {
 		xy.0
     }
 }
+
+impl Value for u64 {
+    fn one() -> u64 {
+        1
+    }
+    fn zero() -> u64 {
+        0
+    }
+}

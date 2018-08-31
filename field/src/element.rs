@@ -76,17 +76,8 @@ impl<F: field::Field<Value=V>, V: arith::Value> From<V> for FieldElement<F, V>
 #[cfg(test)]
 mod tests {
 
-    use {arith, field};
+    use field;
     use super::FieldElement;
-
-    impl arith::Value for u64 {
-        fn one() -> u64 {
-            1
-        }
-        fn zero() -> u64 {
-            0
-        }
-    }
 
     #[derive(Debug, PartialEq, Clone, Copy)]
     struct Mod17Field;

@@ -4,3 +4,6 @@ mod field;
 mod element;
 mod arith;
 mod impls;
+
+pub use field::Field;
+pub use element::FieldElement;
