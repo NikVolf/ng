@@ -6,6 +6,8 @@ mod arith;
 mod impls;
 mod mont;
 
+pub use arith::{MulReduce, ModuleMul, ModuleAdd, ModuleInv, ModuleNeg};
+pub use arith::Value;
 pub use field::Field;
 pub use element::FieldElement;
 pub use mont::MontgomeryElement;

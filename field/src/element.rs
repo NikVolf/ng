@@ -5,6 +5,7 @@ use std::marker::PhantomData;
 
 use {field, arith};
 
+/// Field element on the field F with value V
 #[repr(C)]
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct FieldElement<F: field::Field<Value=V>, V: arith::Value> {
@@ -13,6 +14,7 @@ pub struct FieldElement<F: field::Field<Value=V>, V: arith::Value> {
 }
 
 impl<F: field::Field<Value=V>, V: arith::Value> FieldElement<F, V> {
+    /// Multiplication identity
     pub fn one() -> Self {
         FieldElement {
             value: V::one(),
@@ -20,6 +22,7 @@ impl<F: field::Field<Value=V>, V: arith::Value> FieldElement<F, V> {
         }
     }
 
+    /// Additive identity
     pub fn zero() -> Self {
         FieldElement {
             value: V::zero(),
@@ -27,6 +30,7 @@ impl<F: field::Field<Value=V>, V: arith::Value> FieldElement<F, V> {
         }
     }
 
+    /// Deconstruct and return raw value
     pub fn into_value(self) -> V {
         self.value
     }
@@ -109,7 +113,7 @@ mod tests {
 
         assert_eq!(elem1*elem2, 1.into());
         assert_eq!(elem2*elem1, 1.into());
-        
+
         assert_eq!(elem2/elem1, 9.into());
         assert_eq!(elem1/elem2, 17.into());
      }

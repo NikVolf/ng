@@ -5,6 +5,7 @@ use std::marker::PhantomData;
 
 use {field, arith, element};
 
+/// Field element on the field F with value V in montgomery representation
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct MontgomeryElement<F: field::Field<Value=V>, V: arith::Value> {
     value: V,
@@ -12,35 +13,32 @@ pub struct MontgomeryElement<F: field::Field<Value=V>, V: arith::Value> {
 }
 
 impl<F: field::Field<Value=V>, V: arith::Value> MontgomeryElement<F, V> {
+    /// Multiplication identity
     pub fn one() -> Self {
-        MontgomeryElement {
-            value: V::one(),
-            field: PhantomData,
-        }
+        V::one().into()
     }
 
+    /// Additive identity
     pub fn zero() -> Self {
-        MontgomeryElement {
-            value: V::zero(),
-            field: PhantomData,
-        }
+        V::zero().into()
     }
 
+    /// New field element from regular form
     pub fn from_element(t: element::FieldElement<F, V>) -> Self {
-        MontgomeryElement {
-            value: t.into_value().mul(F::R, F::MODULUS),
-            field: PhantomData,
-        }
+        t.into_value().into()
     }
 
+    /// Convert to regular form
     pub fn into_element(self) -> element::FieldElement<F, V> {
         self.value.mul(F::R_INVERSE, F::MODULUS).into()
     }
 
+    /// Deconstruct and return raw value (not reduced)
     pub fn into_value(self) -> V {
         self.value
     }
 
+    /// Construct from raw value (should be reduced in advance)
     pub(crate) fn from_raw(val: V) -> Self {
         MontgomeryElement {
             value: val,
