@@ -2,5 +2,5 @@
 
 pub trait Field {
     type Value;
-    fn modulus() -> Self::Value;
+    const MODULUS: Self::Value;
 }

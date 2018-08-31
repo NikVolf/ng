@@ -1,6 +1,6 @@
 //! Abstract field element implementation
 
-use std::ops::{Add, Mul, Neg, Sub};
+use std::ops::{Add, Mul, Neg, Sub, Rem};
 use std::marker::PhantomData;
 
 use {field, arith};
@@ -31,11 +31,26 @@ impl<F: field::Field<Value=V>, V: arith::Value> FieldElement<F, V> {
 impl<F: field::Field<Value=V>, V: arith::Value> Add for FieldElement<F, V> {
     type Output = FieldElement<F, V>;
     fn add(self, other: FieldElement<F, V>) -> Self::Output {
-        self.value.add_reduce(other.value, F::modulus()).into()
+        self.value.add(other.value, F::MODULUS).into()
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> From<V> for FieldElement<F, V> {
+impl<F: field::Field<Value=V>, V: arith::Value> Sub for FieldElement<F, V> {
+    type Output = FieldElement<F, V>;
+    fn sub(self, other: FieldElement<F, V>) -> Self::Output {
+        self.value.add(other.value.neg(F::MODULUS), F::MODULUS).into()
+    }
+}
+
+impl<F: field::Field<Value=V>, V: arith::Value> Neg for FieldElement<F, V> {
+    type Output = FieldElement<F, V>;
+    fn neg(self) -> Self::Output {
+        self.value.neg(F::MODULUS).into()
+    }
+}
+
+impl<F: field::Field<Value=V>, V: arith::Value> From<V> for FieldElement<F, V>
+{
     fn from(val: V) -> Self {
         FieldElement {
             value: val,
@@ -64,9 +79,7 @@ mod tests {
 
     impl field::Field for Mod17Field {
         type Value = u64;
-        fn modulus() -> u64 {
-            17
-        }
+        const MODULUS: Self::Value = 17;
     }
 
     #[test]
@@ -76,5 +89,9 @@ mod tests {
 
         assert_eq!(elem1 + elem2, 0.into());
         assert_eq!(elem2 + elem1, 0.into());
+        assert_eq!(elem1 - elem2, 2.into());
+        assert_eq!(elem2 - elem1, 15.into());
+        assert_eq!(-elem1, 16.into());
+        assert_eq!(-elem2, 1.into());
     }
 }
