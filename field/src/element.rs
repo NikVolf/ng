@@ -95,8 +95,8 @@ mod tests {
 
     #[test]
     fn smoky() {
-        let elem1: FieldElement<Mod19Field, u64> = 6.into();
-        let elem2: FieldElement<Mod19Field, u64> = 16.into();
+        let elem1: FieldElement<Mod19Field, _> = 6.into();
+        let elem2: FieldElement<Mod19Field, _> = 16.into();
 
         assert_eq!(elem1 + elem2, 3.into());
         assert_eq!(elem2 + elem1, 3.into());
