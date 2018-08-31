@@ -45,6 +45,25 @@ impl<F: field::Field<Value=V>, V: arith::Value> MontgomeryElement<F, V> {
             field: PhantomData,
         }
     }
+
+    /// Squared field element
+    pub fn squared(self) -> Self {
+        self * self
+    }
+
+    /// self ** other
+    pub fn pow(self, other: V) -> Self {
+        let mut res = Self::one();
+
+        for i in other.bits() {
+            res = res.squared();
+            if i {
+                res = self * res;
+            }
+        }
+
+        res
+    }
 }
 
 impl<F: field::Field<Value=V>, V: arith::Value> Add for MontgomeryElement<F, V> {
@@ -121,5 +140,8 @@ mod tests {
 
         assert_eq!(elem1*elem2, 1.into());
         assert_eq!(elem2*elem1, 1.into());
+
+        assert_eq!(elem1.pow(20), 17.into());
+        assert_eq!(elem2.pow(10), 16.into());
      }
 }

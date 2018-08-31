@@ -52,7 +52,16 @@ impl Value for u64 {
     fn one() -> u64 {
         1
     }
+
     fn zero() -> u64 {
         0
+    }
+
+    fn max_bits() -> usize {
+        64
+    }
+
+    fn bit(&self, position: usize) -> bool {
+        self & (1 << position) > 0
     }
 }

@@ -34,6 +34,25 @@ impl<F: field::Field<Value=V>, V: arith::Value> FieldElement<F, V> {
     pub fn into_value(self) -> V {
         self.value
     }
+
+    /// Squared field element
+    pub fn squared(self) -> Self {
+        self * self
+    }
+
+    /// self ** other
+    pub fn pow(self, other: V) -> Self {
+        let mut res = Self::one();
+
+        for i in other.bits() {
+            res = res.squared();
+            if i {
+                res = self * res;
+            }
+        }
+
+        res
+    }
 }
 
 impl<F: field::Field<Value=V>, V: arith::Value> Add for FieldElement<F, V> {
@@ -116,5 +135,8 @@ mod tests {
 
         assert_eq!(elem2/elem1, 9.into());
         assert_eq!(elem1/elem2, 17.into());
+
+        assert_eq!(elem1.pow(20), 17.into());
+        assert_eq!(elem2.pow(10), 16.into());
      }
 }

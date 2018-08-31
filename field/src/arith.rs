@@ -30,10 +30,43 @@ pub trait MulReduce {
     fn mul_reduce(self, other: Self, module: Self, r_inverse: Self) -> Self;
 }
 
+pub struct BitsIterator<'a, T: 'a + Value> {
+    value: &'a T,
+    position: usize,
+}
+
+impl<'a, T: 'a + Value> Iterator for BitsIterator<'a, T> {
+    type Item = bool;
+
+    fn next(&mut self) -> Option<bool> {
+        if self.position == 0 {
+            None
+        } else {
+            self.position -= 1;
+            Some(self.value.bit(self.position))
+        }
+    }
+}
+
 /// Scalar interface
 pub trait Value: Sized + Clone + Copy + ModuleAdd + ModuleMul + ModuleNeg + ModuleInv + MulReduce {
     /// Multiplicative identity
     fn one() -> Self;
+
     /// Addition identity
     fn zero() -> Self;
+
+    /// Get nth bit
+    fn bit(&self, position: usize) -> bool;
+
+    /// Get total bit
+    fn max_bits() -> usize;
+
+    /// Get bits iterator
+    fn bits<'a>(&'a self) -> BitsIterator<'a, Self> {
+        BitsIterator {
+            value: &self,
+            position: Self::max_bits(),
+        }
+    }
 }

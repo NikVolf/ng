@@ -1,7 +1,7 @@
 //! Abstract field
 
 /// Abstract field description
-pub trait Field {
+pub trait Field: Copy + Clone {
     /// Type of scalar
     type Value;
     /// Field modulus
