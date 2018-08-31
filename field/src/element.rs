@@ -26,6 +26,10 @@ impl<F: field::Field<Value=V>, V: arith::Value> FieldElement<F, V> {
             field: PhantomData,
         }
     }
+
+    pub fn into_value(self) -> V {
+        self.value
+    }
 }
 
 impl<F: field::Field<Value=V>, V: arith::Value> Add for FieldElement<F, V> {
@@ -80,27 +84,29 @@ mod tests {
     use super::FieldElement;
 
     #[derive(Debug, PartialEq, Clone, Copy)]
-    struct Mod17Field;
+    struct Mod19Field;
 
-    impl field::Field for Mod17Field {
+    impl field::Field for Mod19Field {
         type Value = u64;
-        const MODULUS: Self::Value = 17;
+        const MODULUS: Self::Value = 19;
+        const R: Self::Value = 16;
+        const R_INVERSE: Self::Value = 6;
     }
 
     #[test]
     fn smoky() {
-        let elem1: FieldElement<Mod17Field, u64> = 6.into();
-        let elem2: FieldElement<Mod17Field, u64> = 16.into();
+        let elem1: FieldElement<Mod19Field, u64> = 6.into();
+        let elem2: FieldElement<Mod19Field, u64> = 16.into();
 
-        assert_eq!(elem1 + elem2, 5.into());
-        assert_eq!(elem2 + elem1, 5.into());
-        assert_eq!(elem1 - elem2, 7.into());
+        assert_eq!(elem1 + elem2, 3.into());
+        assert_eq!(elem2 + elem1, 3.into());
+        assert_eq!(elem1 - elem2, 9.into());
         assert_eq!(elem2 - elem1, 10.into());
-        assert_eq!(-elem1, 11.into());
-        assert_eq!(-elem2, 1.into());
-        assert_eq!(elem1*elem2, 11.into());
-        assert_eq!(elem2*elem1, 11.into());
-        assert_eq!(elem2/elem1, 14.into());
-        assert_eq!(elem1/elem2, 11.into());
-    }
+        assert_eq!(-elem1, 13.into());
+        assert_eq!(-elem2, 3.into());
+        assert_eq!(elem1*elem2, 1.into());
+        assert_eq!(elem2*elem1, 1.into());
+        assert_eq!(elem2/elem1, 9.into());
+        assert_eq!(elem1/elem2, 17.into());
+     }
 }

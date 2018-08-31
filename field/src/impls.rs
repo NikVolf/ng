@@ -6,6 +6,12 @@ impl ModuleMul for u64 {
     }
 }
 
+impl MulReduce for u64 {
+    fn mul_reduce(self, other: Self, module: Self, r_inverse: Self) -> Self {
+        self.mul(other, module).mul(r_inverse, module)
+    }
+}
+
 impl ModuleAdd for u64 {
     fn add(self, other: Self, module: Self) -> Self {
         let (res, overflow) = self.overflowing_add(other);
