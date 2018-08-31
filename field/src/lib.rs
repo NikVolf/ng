@@ -1,5 +1,7 @@
 //! Abstract field and field element operations implementation
 
+#![warn(missing_docs)]
+
 mod field;
 mod element;
 mod arith;
