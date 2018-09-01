@@ -7,6 +7,8 @@ mod element;
 mod arith;
 mod impls;
 mod mont;
+#[cfg(test)]
+mod test;
 
 pub use arith::{MulReduce, ModuleMul, ModuleAdd, ModuleInv, ModuleNeg};
 pub use arith::Value;

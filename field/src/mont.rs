@@ -108,18 +108,8 @@ impl<F: field::Field<Value=V>, V: arith::Value> From<V> for MontgomeryElement<F,
 #[cfg(test)]
 mod tests {
 
-    use field;
+    use test::Mod19Field;
     use super::MontgomeryElement;
-
-    #[derive(Debug, PartialEq, Clone, Copy)]
-    struct Mod19Field;
-
-    impl field::Field for Mod19Field {
-        type Value = u64;
-        const MODULUS: Self::Value = 19;
-        const R: Self::Value = 16;
-        const R_INVERSE: Self::Value = 6;
-    }
 
     #[test]
     fn smoky() {
