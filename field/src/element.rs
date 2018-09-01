@@ -105,6 +105,7 @@ mod tests {
 
     use test::Mod19Field;
     use super::FieldElement;
+    use quickcheck::TestResult;
 
     #[test]
     fn smoky() {
@@ -128,5 +129,17 @@ mod tests {
 
         assert_eq!(elem1.pow(20), 17.into());
         assert_eq!(elem2.pow(10), 16.into());
+     }
+
+     quickcheck! {
+         fn number_div_by_self_equals_one(x: u64) -> TestResult {
+             if x % 19 == 0 {
+                 TestResult::discard()
+             } else {
+                let x_e: FieldElement<Mod19Field, _> = (x % 19).into();
+
+                TestResult::from_bool(x_e / x_e == 1.into())
+             }
+         }
      }
 }
