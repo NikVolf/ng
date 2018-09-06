@@ -79,7 +79,7 @@ mod tests {
     #[derive(Clone, Copy, PartialEq, Debug)]
     struct U64Curve;
 
-    /// y^2 = x^3 + 7x + 14
+    /// y^2 = x^3 + 7x + 14 over Fp mod 1125899839733759
     impl Curve for U64Curve {
         type Value = field::FieldElement<U64Field, u64>;
 
