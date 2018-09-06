@@ -87,7 +87,24 @@ impl<I: Into<Point<C>>, C: Curve> ::std::ops::Add<I> for Point<C> {
             }
         }
 
-        Self::infinity()
+        // H = U2 - U1
+        let h = u2 - u1;
+        // R = S2 - S1
+        let r = s2 - s1;
+
+        let h2 = h.squared();
+        let h3 = h2 * h;
+
+        // X3 = R^2 - H^3 - 2*U1*H^2
+        let x3 = r.squared() - h3 - u1*h2.mul_scalar(2);
+
+        // Y3 = R*(U1*H^2 - X3) - S1*H^3
+        let y3 = r * (u1 * h2 - x3) - s1 * h3;
+
+        // Z3 = H*Z1*Z2
+        let z3 = h * z1 * z2;
+
+        (x3, y3, z3).into()
     }
 }
 
@@ -104,5 +121,14 @@ mod tests {
 
         // 570768668753918, 222182780873386
         assert_eq!(dp, (570768668753918, 222182780873386).into());
+    }
+
+    #[test]
+    fn add() {
+        let jp: JacobianPoint<U64Curve> = U64Curve::generator().into();
+        let djp = jp.clone() + jp.clone();
+        let np = AffinePoint::from(djp + jp);
+
+        assert_eq!(np, (537613624567015, 945163207984607).into());
     }
 }
