@@ -162,7 +162,7 @@ mod tests {
         let jp: JacobianPoint<U64Curve> = U64Curve::generator().into();
         let dp = AffinePoint::from(jp.clone() * 2);;
         assert_eq!(dp, (570768668753918, 222182780873386).into());
-        let dp = AffinePoint::from(jp * 570768668753918);
-        assert_eq!(dp, (210159848059198, 473433224346301).into());
+        let bp = AffinePoint::from(jp * 570768668753918);
+        assert_eq!(bp, (210159848059198, 473433224346301).into());
     }
 }

@@ -1,5 +1,5 @@
 
-use field::{FieldValue, MulScalar};
+use field::{FieldValue, MulScalar, Scalar};
 use {Curve, JacobianPoint};
 
 #[derive(Clone, PartialEq, Debug)]
@@ -97,6 +97,22 @@ impl<C: Curve> ::std::ops::Add for Point<C>{
     }
 }
 
+impl<I: Scalar, C: Curve> ::std::ops::Mul<I> for Point<C>
+{
+    type Output = Self;
+
+    fn mul(self, other: I) -> Self {
+        let mut r0 = Self::infinity();
+        let mut r1 = self;
+        for i in 0..I::max_bits() {
+            let b = Scalar::bit(&other, i);
+            if b { r0 = r0 + r1.clone() }
+            r1 = r1.clone() + r1;
+        }
+        r0
+    }
+}
+
 #[cfg(test)]
 mod tests {
 
@@ -118,5 +134,14 @@ mod tests {
         let np = p.clone() + U64Curve::generator();
 
         assert_eq!(np, (537613624567015, 945163207984607).into());
+    }
+
+    #[test]
+    fn mul() {
+        let p = U64Curve::generator();
+        let dp = p.clone() * 2;
+        assert_eq!(dp, (570768668753918, 222182780873386).into());
+        let bp = p * 570768668753918;
+        assert_eq!(bp, (210159848059198, 473433224346301).into());
     }
 }
