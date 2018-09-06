@@ -14,44 +14,9 @@ pub struct FieldElement<F: field::Field<Value=V>, V: arith::Value> {
 }
 
 impl<F: field::Field<Value=V>, V: arith::Value> FieldElement<F, V> {
-    /// Multiplication identity
-    pub fn one() -> Self {
-        FieldElement {
-            value: V::one(),
-            field: PhantomData,
-        }
-    }
-
-    /// Additive identity
-    pub fn zero() -> Self {
-        FieldElement {
-            value: V::zero(),
-            field: PhantomData,
-        }
-    }
-
     /// Deconstruct and return raw value
     pub fn into_value(self) -> V {
         self.value
-    }
-
-    /// Squared field element
-    pub fn squared(self) -> Self {
-        self * self
-    }
-
-    /// self ** other
-    pub fn pow(self, other: V) -> Self {
-        let mut res = Self::one();
-
-        for i in other.bits() {
-            res = res.squared();
-            if i {
-                res = self * res;
-            }
-        }
-
-        res
     }
 }
 
@@ -100,11 +65,32 @@ impl<F: field::Field<Value=V>, V: arith::Value> From<V> for FieldElement<F, V>
     }
 }
 
+impl<F: field::Field<Value=V>, V: arith::Value> field::FieldValue for FieldElement<F, V> {
+    type Value = V;
+
+    /// Multiplication identity
+    fn one() -> Self {
+        FieldElement {
+            value: V::one(),
+            field: PhantomData,
+        }
+    }
+
+    /// Additive identity
+    fn zero() -> Self {
+        FieldElement {
+            value: V::zero(),
+            field: PhantomData,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
 
     use test::Mod19Field;
     use super::FieldElement;
+    use field::FieldValue;
     use quickcheck::TestResult;
 
     #[test]
