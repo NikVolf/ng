@@ -13,5 +13,7 @@ pub struct JacobianPoint<C: Curve> {
 pub trait Curve : Sized {
     type Value: field::FieldValue;
 
-    const GENERATOR: affine::Point<Self>;
+    fn generator() -> affine::Point<Self>;
+
+    fn a() -> Self::Value;
 }
