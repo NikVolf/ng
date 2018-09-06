@@ -1,6 +1,6 @@
 
 use field::{FieldValue, MulScalar};
-use super::Curve;
+use {Curve, JacobianPoint};
 
 #[derive(Clone, PartialEq, Debug)]
 pub struct Point<C: Curve> {
@@ -48,6 +48,17 @@ impl<I, C: Curve> From<(I, I)> for Point<C>
     }
 }
 
+impl<C: Curve> From<JacobianPoint<C>> for Point<C> {
+    fn from(p: JacobianPoint<C>) -> Self {
+        let (x, y, z) = p.into_parts();
+
+        let z2 = z.squared();
+        let z3 = z2 * z;
+
+        (x / z2, y / z3).into()
+    }
+}
+
 impl<C: Curve> ::std::ops::Add for Point<C>{
     type Output = Self;
     fn add(self, other: Self) -> Self::Output {
@@ -89,7 +100,7 @@ mod tests {
     use Curve;
 
     #[test]
-    fn doubling() {
+    fn double() {
         let p = U64Curve::generator();
         let dp = p.clone() + p;
 

@@ -1,6 +1,7 @@
 use field::{FieldValue, MulScalar};
 use {Curve, AffinePoint};
 
+#[derive(Clone, Debug, PartialEq)]
 pub struct Point<C: Curve> {
     x: C::Value,
     y: C::Value,
@@ -32,14 +33,14 @@ impl<I, C: Curve> From<(I, I, I)> for Point<C>
 }
 
 impl<C: Curve> Point<C> {
-    fn into_parts(self) -> (C::Value, C::Value, C::Value) {
+    pub fn into_parts(self) -> (C::Value, C::Value, C::Value) {
         (self.x, self.y, self.z)
     }
 
     pub fn infinity() -> Self {
         Point {
             x: C::Value::zero(),
-            y: C::Value::one(),
+            y: C::Value::zero(),
             z: C::Value::one(),
         }
     }
@@ -71,7 +72,7 @@ impl<I: Into<Point<C>>, C: Curve> ::std::ops::Add<I> for Point<C> {
 
                 // M = 3*X^2 + a*Z^4
                 // Curve over montgomery field elements should have C::a() in regular form!
-                let m = x1.squared().mul_scalar(3) + C::a() * z1.squared().squared();
+                let m = x1.squared().mul_scalar(3) + C::a() * (z1.squared().squared());
 
                 // X' = M^2 - 2*S
                 let x = m.squared() - s.mul_scalar(2);
@@ -80,12 +81,28 @@ impl<I: Into<Point<C>>, C: Curve> ::std::ops::Add<I> for Point<C> {
                 let y = m * (s - x) - y1.squared().squared().mul_scalar(8);
 
                 // Z' = 2*Y*Z
-                let z = (y * z1).mul_scalar(2);
+                let z = (y1 * z1).mul_scalar(2);
 
                 return (x, y, z).into()
             }
         }
 
         Self::infinity()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use test::U64Curve;
+    use {JacobianPoint, AffinePoint, Curve};
+
+    #[test]
+    fn double() {
+        let jp: JacobianPoint<U64Curve> = U64Curve::generator().into();
+        let dp = AffinePoint::from(jp.clone() + jp);
+
+        // 570768668753918, 222182780873386
+        assert_eq!(dp, (570768668753918, 222182780873386).into());
     }
 }
