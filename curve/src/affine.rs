@@ -16,6 +16,10 @@ impl<C: Curve> Point<C> {
         }
     }
 
+    pub fn is_infinity(&self) -> bool {
+        self.x == C::Value::zero() && self.y == C::Value::zero()
+    }
+
     pub fn new(x: C::Value, y: C::Value) -> Self {
         Point { x: x, y: y }
     }
@@ -32,6 +36,10 @@ impl<C: Curve> Point<C> {
 impl<C: Curve> ::std::ops::Add for Point<C>{
     type Output = Self;
     fn add(self, other: Self) -> Self::Output {
+        if self.is_infinity() && other.is_infinity() { return Self::infinity(); }
+        if self.is_infinity() { return other; }
+        if other.is_infinity() { return self; }
+
         let x1 = self.x;
         let y1 = self.y;
         let x2 = other.x;
@@ -54,7 +62,15 @@ impl<C: Curve> ::std::ops::Add for Point<C>{
                 y: l * (x1 - x) - y1,
             };
         }
-        Self::infinity()
+
+        let l = (y2 - y1) / (x2 - x1);
+        let x3 = l.squared() - x1 - x2;
+        let y3 = l * (x1 - x3) - y1;
+
+        Point {
+            x: x3,
+            y: y3,
+        }
     }
 }
 
@@ -103,5 +119,14 @@ mod tests {
         // 570768668753918, 222182780873386
         assert_eq!(dp.x(), 570768668753918.into());
         assert_eq!(dp.y(), 222182780873386.into());
+    }
+
+    #[test]
+    fn add() {
+        let p = U64Curve::generator() + U64Curve::generator();
+        let np = p.clone() + U64Curve::generator();
+
+        assert_eq!(np.x(), 537613624567015.into());
+        assert_eq!(np.y(), 945163207984607.into());
     }
 }
