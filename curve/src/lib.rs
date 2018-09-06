@@ -1,14 +1,10 @@
 extern crate pcurve_field as field;
 
 mod affine;
+mod jacobian;
 
 pub use affine::Point as AffinePoint;
-
-pub struct JacobianPoint<C: Curve> {
-    x: C::Value,
-    y: C::Value,
-    z: C::Value,
-}
+pub use jacobian::Point as JacobianPoint;
 
 pub trait Curve : Sized {
     type Value: field::FieldValue;

@@ -31,6 +31,21 @@ impl<C: Curve> Point<C> {
     pub fn y(&self) -> C::Value {
         self.y
     }
+
+    pub fn into_parts(self) -> (C::Value, C::Value) {
+        (self.x, self.y)
+    }
+}
+
+impl<I, C: Curve> From<(I, I)> for Point<C>
+    where I: Into<C::Value>
+{
+    fn from(p: (I, I)) -> Self {
+        Point {
+            x: p.0.into(),
+            y: p.1.into(),
+        }
+    }
 }
 
 impl<C: Curve> ::std::ops::Add for Point<C>{
@@ -40,10 +55,9 @@ impl<C: Curve> ::std::ops::Add for Point<C>{
         if self.is_infinity() { return other; }
         if other.is_infinity() { return self; }
 
-        let x1 = self.x;
-        let y1 = self.y;
-        let x2 = other.x;
-        let y2 = other.y;
+        let (x1, y1) = self.into_parts();
+        let (x2, y2) = other.into_parts();
+
         if x1 == x2 {
             // point doubling
             if y1 != y2 {
@@ -57,20 +71,14 @@ impl<C: Curve> ::std::ops::Add for Point<C>{
             let l = (x1.squared().mul_scalar(3) + C::a()) / y1.mul_scalar(2);
             let x = l.squared() - x1.mul_scalar(2);
 
-            return Point {
-                x: x,
-                y: l * (x1 - x) - y1,
-            };
+            return (x, l * (x1 - x) - y1).into();
         }
 
         let l = (y2 - y1) / (x2 - x1);
         let x3 = l.squared() - x1 - x2;
         let y3 = l * (x1 - x3) - y1;
 
-        Point {
-            x: x3,
-            y: y3,
-        }
+        (x3, y3).into()
     }
 }
 
