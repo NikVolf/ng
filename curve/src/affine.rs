@@ -2,7 +2,7 @@
 use field::{FieldValue, MulScalar};
 use super::Curve;
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct Point<C: Curve> {
     x: C::Value,
     y: C::Value,
@@ -125,8 +125,7 @@ mod tests {
         let dp = p.clone() + p;
 
         // 570768668753918, 222182780873386
-        assert_eq!(dp.x(), 570768668753918.into());
-        assert_eq!(dp.y(), 222182780873386.into());
+        assert_eq!(dp, (570768668753918, 222182780873386).into());
     }
 
     #[test]
@@ -134,7 +133,6 @@ mod tests {
         let p = U64Curve::generator() + U64Curve::generator();
         let np = p.clone() + U64Curve::generator();
 
-        assert_eq!(np.x(), 537613624567015.into());
-        assert_eq!(np.y(), 945163207984607.into());
+        assert_eq!(np, (537613624567015, 945163207984607).into());
     }
 }
