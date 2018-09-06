@@ -48,6 +48,12 @@ impl<F: field::Field<Value=V>, V: arith::Value> Mul for FieldElement<F, V> {
     }
 }
 
+impl<F: field::Field<Value=V>, V: arith::Value> arith::MulScalar for FieldElement<F, V> {
+    fn mul_scalar(self, other: u32) -> Self {
+        self.value.mul_scalar(other, F::MODULUS).into()
+    }
+}
+
 impl<F: field::Field<Value=V>, V: arith::Value> Div for FieldElement<F, V> {
     type Output = FieldElement<F, V>;
     fn div(self, other: Self) -> Self::Output {

@@ -1,10 +1,10 @@
 //! Abstract field
 
 use std::ops::{Add, Mul, Neg, Sub, Div};
-use arith::Value;
+use arith::{Value, MulScalar};
 
 /// Abstract field description
-pub trait Field: Copy + Clone {
+pub trait Field: Copy + Clone + PartialEq {
     /// Type of scalar
     type Value;
     /// Field modulus
@@ -19,10 +19,12 @@ pub trait FieldValue:
     Sized +
     Copy +
     Clone +
+    PartialEq +
     Mul<Output=Self> +
     Add<Output=Self> +
     Div<Output=Self> +
-    Sub<Output=Self>
+    Sub<Output=Self> +
+    MulScalar
 {
     type Value: Value;
 

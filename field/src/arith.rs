@@ -30,6 +30,14 @@ pub trait MulReduce {
     fn mul_reduce(self, other: Self, module: Self, r_inverse: Self) -> Self;
 }
 
+pub trait ModuleMulScalar {
+    fn mul_scalar(self, other: u32, module: Self) -> Self;
+}
+
+pub trait MulScalar {
+    fn mul_scalar(self, other: u32) -> Self;
+}
+
 pub struct BitsIterator<'a, T: 'a + Value> {
     value: &'a T,
     position: usize,
@@ -49,7 +57,18 @@ impl<'a, T: 'a + Value> Iterator for BitsIterator<'a, T> {
 }
 
 /// Scalar interface
-pub trait Value: Sized + Clone + Copy + ModuleAdd + ModuleMul + ModuleNeg + ModuleInv + MulReduce {
+pub trait Value:
+    Sized +
+    Clone +
+    Copy +
+    PartialEq +
+    ModuleAdd +
+    ModuleMul +
+    ModuleMulScalar +
+    ModuleNeg +
+    ModuleInv +
+    MulReduce
+{
     /// Multiplicative identity
     fn one() -> Self;
 

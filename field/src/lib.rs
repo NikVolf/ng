@@ -12,7 +12,7 @@ mod mont;
 #[cfg(test)]
 mod test;
 
-pub use arith::{MulReduce, ModuleMul, ModuleAdd, ModuleInv, ModuleNeg};
+pub use arith::{MulReduce, ModuleMul, ModuleAdd, ModuleInv, ModuleNeg, MulScalar, ModuleMulScalar};
 pub use arith::Value;
 pub use field::{Field, FieldValue};
 pub use element::FieldElement;

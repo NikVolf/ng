@@ -1,18 +1,17 @@
 extern crate pcurve_field as field;
 
-struct AffinePoint<V: field::FieldValue> {
-    x: V,
-    y: V,
+mod affine;
+
+pub use affine::Point as AffinePoint;
+
+pub struct JacobianPoint<C: Curve> {
+    x: C::Value,
+    y: C::Value,
+    z: C::Value,
 }
 
-struct JacobianPoint<V: field::Value> {
-    x: V,
-    y: V,
-    z: V,
-}
-
-trait Curve {
+pub trait Curve : Sized {
     type Value: field::FieldValue;
 
-    const GENERATOR: AffinePoint<Self::Value>;
+    const GENERATOR: affine::Point<Self>;
 }

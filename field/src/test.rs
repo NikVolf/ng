@@ -1,5 +1,5 @@
 
-use field;
+use {field, arith};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Mod19Field;
