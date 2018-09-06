@@ -1,4 +1,4 @@
-use field::{FieldValue, MulScalar};
+use field::{FieldValue, MulScalar, Scalar};
 use {Curve, AffinePoint};
 
 #[derive(Clone, Debug, PartialEq)]
@@ -44,12 +44,37 @@ impl<C: Curve> Point<C> {
             z: C::Value::zero(),
         }
     }
+
+    pub fn is_infinity(&self) -> bool {
+        self.z == C::Value::zero()
+    }
+}
+
+impl<I: Scalar, C: Curve> ::std::ops::Mul<I> for Point<C>
+{
+    type Output = Self;
+
+    fn mul(self, other: I) -> Self {
+        let mut r0 = Self::infinity();
+        let mut r1 = self;
+        for i in 0..I::max_bits() {
+            let b = Scalar::bit(&other, i);
+            if b { r0 = r0 + r1.clone() }
+            r1 = r1.clone() + r1;
+        }
+        r0
+    }
 }
 
 impl<I: Into<Point<C>>, C: Curve> ::std::ops::Add<I> for Point<C> {
     type Output = Self;
     fn add(self, other: I) -> Self {
         let other: Point<C> = other.into();
+        if self.is_infinity() && other.is_infinity() { return Self::infinity(); }
+        if self.is_infinity() {
+            return other;
+        }
+        if other.is_infinity() { return self; }
 
         let (x1, y1, z1) = self.into_parts();
         let (x2, y2, z2) = other.into_parts();
@@ -130,5 +155,14 @@ mod tests {
         let np = AffinePoint::from(djp + jp);
 
         assert_eq!(np, (537613624567015, 945163207984607).into());
+    }
+
+    #[test]
+    fn mul() {
+        let jp: JacobianPoint<U64Curve> = U64Curve::generator().into();
+        let dp = AffinePoint::from(jp.clone() * 2);;
+        assert_eq!(dp, (570768668753918, 222182780873386).into());
+        let dp = AffinePoint::from(jp * 570768668753918);
+        assert_eq!(dp, (210159848059198, 473433224346301).into());
     }
 }
