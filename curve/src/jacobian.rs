@@ -40,8 +40,8 @@ impl<C: Curve> Point<C> {
     pub fn infinity() -> Self {
         Point {
             x: C::Value::zero(),
-            y: C::Value::zero(),
-            z: C::Value::one(),
+            y: C::Value::one(),
+            z: C::Value::zero(),
         }
     }
 }

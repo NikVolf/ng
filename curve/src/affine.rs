@@ -52,6 +52,10 @@ impl<C: Curve> From<JacobianPoint<C>> for Point<C> {
     fn from(p: JacobianPoint<C>) -> Self {
         let (x, y, z) = p.into_parts();
 
+        if z == C::Value::zero() {
+            return Self::infinity();
+        }
+
         let z2 = z.squared();
         let z3 = z2 * z;
 
