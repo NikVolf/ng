@@ -27,3 +27,21 @@ impl Curve for U64Curve {
         7.into()
     }
 }
+
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub struct U64MontgomeryCurve;
+
+/// y^2 = x^3 + 7x + 14 over Fp mod 1125899839733759
+impl Curve for U64MontgomeryCurve {
+    type Value = field::MontgomeryElement<U64Field, u64>;
+
+    fn generator() -> AffinePoint<Self> {
+        (2, 6).into()
+    }
+
+    fn a() -> Self::Value {
+        use field::Field;
+
+        ((7 * U64Field::R_INVERSE) % U64Field::MODULUS).into()
+    }
+}
