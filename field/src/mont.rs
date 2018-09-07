@@ -135,6 +135,9 @@ mod tests {
         assert_eq!(elem1*elem2, 1.into());
         assert_eq!(elem2*elem1, 1.into());
 
+        assert_eq!(elem2/elem1, 9.into());
+        assert_eq!(elem1/elem2, 17.into());
+
         assert_eq!(elem1.pow(20), 17.into());
         assert_eq!(elem2.pow(10), 16.into());
      }
