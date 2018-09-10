@@ -152,8 +152,6 @@ mod tests {
          }
 
          fn field_multiplication_is_commutative(x: u64, y: u64) -> TestResult {
-             use arith::ModuleInv;
-
              if x % 1125899839733759 == 0 {
                  TestResult::discard()
              } else {
@@ -178,7 +176,6 @@ mod tests {
                     (x_e + y_e) * z_e == y_e * z_e + x_e * z_e
                 )
              }
-
          }
      }
 }

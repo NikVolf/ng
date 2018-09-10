@@ -15,6 +15,7 @@ pub trait Field: Copy + Clone + PartialEq {
     const R_INVERSE: Self::Value;
 }
 
+/// Generalization of field element
 pub trait FieldValue:
     Sized +
     Clone +
@@ -26,12 +27,15 @@ pub trait FieldValue:
     Sub<Output=Self> +
     MulScalar
 {
+    /// Inner scalar value type of field element
     type Value: Value;
 
+    /// Squared field element
     fn squared(self) -> Self {
         self * self
     }
 
+    /// self^other
     fn pow(self, other: Self::Value) -> Self {
         let mut res = Self::one();
 
@@ -45,7 +49,7 @@ pub trait FieldValue:
         res
     }
 
-     /// Multiplication identity
+    /// Multiplication identity
     fn one() -> Self;
 
     /// Additive identity

@@ -30,11 +30,15 @@ pub trait MulReduce {
     fn mul_reduce(self, other: Self, module: Self, r_inverse: Self) -> Self;
 }
 
+/// Modular multiplication by u32 scalar
 pub trait ModuleMulScalar {
+    /// Modular multipliy arithmetic value by u32 scalar
     fn mul_scalar(self, other: u32, module: Self) -> Self;
 }
 
+/// Multiplication by u32 scalar
 pub trait MulScalar {
+    /// Multipliy arithmetic value by u32 scalar
     fn mul_scalar(self, other: u32) -> Self;
 }
 
