@@ -8,5 +8,6 @@ authors = ["NikVolf <nikvolf@gmail.com>"]
 [workspace]
 members = [
     "./field",
-    "./curve"
+    "./curve",
+    "./uint-field"
 ]
