@@ -136,7 +136,7 @@ impl<I: Into<Point<C>>, C: Curve> ::std::ops::Add<I> for Point<C> {
 #[cfg(test)]
 mod tests {
 
-    use test::U64Curve;
+    use test::{U64Curve, U64MontgomeryCurve};
     use {JacobianPoint, AffinePoint, Curve};
 
     #[test]
@@ -160,6 +160,15 @@ mod tests {
     #[test]
     fn mul() {
         let jp: JacobianPoint<U64Curve> = U64Curve::generator().into();
+        let dp = AffinePoint::from(jp.clone() * 2);;
+        assert_eq!(dp, (570768668753918, 222182780873386).into());
+        let bp = AffinePoint::from(jp * 570768668753918);
+        assert_eq!(bp, (210159848059198, 473433224346301).into());
+    }
+
+    #[test]
+    fn mul_mont() {
+        let jp: JacobianPoint<U64MontgomeryCurve> = U64MontgomeryCurve::generator().into();
         let dp = AffinePoint::from(jp.clone() * 2);;
         assert_eq!(dp, (570768668753918, 222182780873386).into());
         let bp = AffinePoint::from(jp * 570768668753918);
