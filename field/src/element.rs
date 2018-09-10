@@ -129,45 +129,45 @@ mod tests {
     }
 
      quickcheck! {
-         fn number_div_by_self_equals_one(x: u64) -> TestResult {
-             if x % 1125899839733759 == 0 {
-                 TestResult::discard()
-             } else {
+        fn number_div_by_self_equals_one(x: u64) -> TestResult {
+            if x % 1125899839733759 == 0 {
+                TestResult::discard()
+            } else {
                 let x_e = field1_elem(x);
 
                 TestResult::from_bool(x_e / x_e == 1.into())
-             }
-         }
+            }
+        }
 
          fn one_div_number_equals_inverse(x: u64) -> TestResult {
-             use arith::ModuleInv;
+            use arith::ModuleInv;
 
-             if x % 1125899839733759 == 0 {
-                 TestResult::discard()
-             } else {
+            if x % 1125899839733759 == 0 {
+                TestResult::discard()
+            } else {
                 let x_e = field1_elem(x);
 
                 TestResult::from_bool(FieldElement::from(1) / x_e == x_e.into_value().inv(1125899839733759).into())
-             }
-         }
+            }
+        }
 
-         fn field_multiplication_is_commutative(x: u64, y: u64) -> TestResult {
-             if x % 1125899839733759 == 0 {
-                 TestResult::discard()
-             } else {
+        fn field_multiplication_is_commutative(x: u64, y: u64) -> TestResult {
+            if x % 1125899839733759 == 0 {
+                TestResult::discard()
+            } else {
                 let x_e = field1_elem(x);
                 let y_e = field1_elem(y);
 
                 TestResult::from_bool(
                     x_e * y_e == y_e * x_e
                 )
-             }
-         }
+            }
+        }
 
-         fn field_multiplication_is_associative(x: u64, y: u64, z: u64) -> TestResult {
-             if x % 1125899839733759 == 0 {
+        fn field_multiplication_is_associative(x: u64, y: u64, z: u64) -> TestResult {
+            if x % 1125899839733759 == 0 {
                  TestResult::discard()
-             } else {
+            } else {
                 let x_e = field1_elem(x);
                 let y_e = field1_elem(y);
                 let z_e = field1_elem(z);
@@ -175,7 +175,7 @@ mod tests {
                 TestResult::from_bool(
                     (x_e + y_e) * z_e == y_e * z_e + x_e * z_e
                 )
-             }
+            }
          }
      }
 }
