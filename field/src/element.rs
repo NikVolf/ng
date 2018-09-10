@@ -94,7 +94,7 @@ impl<F: field::Field<Value=V>, V: arith::Value> field::FieldValue for FieldEleme
 #[cfg(test)]
 mod tests {
 
-    use test::Mod19Field;
+    use test::{Mod19Field, Mod1125899839733759Field};
     use super::FieldElement;
     use field::FieldValue;
     use quickcheck::TestResult;
@@ -125,10 +125,10 @@ mod tests {
 
      quickcheck! {
          fn number_div_by_self_equals_one(x: u64) -> TestResult {
-             if x % 19 == 0 {
+             if x % 1125899839733759 == 0 {
                  TestResult::discard()
              } else {
-                let x_e: FieldElement<Mod19Field, _> = (x % 19).into();
+                let x_e: FieldElement<Mod1125899839733759Field, _> = (x % 1125899839733759).into();
 
                 TestResult::from_bool(x_e / x_e == 1.into())
              }
@@ -137,12 +137,12 @@ mod tests {
          fn one_div_number_equals_inverse(x: u64) -> TestResult {
              use arith::ModuleInv;
 
-             if x % 19 == 0 {
+             if x % 1125899839733759 == 0 {
                  TestResult::discard()
              } else {
-                 let x_e: FieldElement<Mod19Field, _> = (x % 19).into();
+                 let x_e: FieldElement<Mod1125899839733759Field, _> = (x % 1125899839733759).into();
 
-                 TestResult::from_bool(FieldElement::from(1) / x_e == x_e.into_value().inv(19).into())
+                 TestResult::from_bool(FieldElement::from(1) / x_e == x_e.into_value().inv(1125899839733759).into())
              }
          }
      }
