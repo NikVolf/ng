@@ -67,7 +67,8 @@ pub trait Value:
     ModuleMulScalar +
     ModuleNeg +
     ModuleInv +
-    MulReduce
+    MulReduce +
+    ::std::ops::Rem<Output=Self>
 {
     /// Multiplicative identity
     fn one() -> Self;

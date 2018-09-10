@@ -1,6 +1,6 @@
 //! Abstract field
 
-use std::ops::{Add, Mul, Neg, Sub, Div};
+use std::ops::{Add, Mul, Sub, Div};
 use arith::{Value, MulScalar};
 
 /// Abstract field description

@@ -65,7 +65,7 @@ impl<F: field::Field<Value=V>, V: arith::Value> From<V> for FieldElement<F, V>
 {
     fn from(val: V) -> Self {
         FieldElement {
-            value: val,
+            value: val % F::MODULUS,
             field: PhantomData,
         }
     }
@@ -123,12 +123,17 @@ mod tests {
         assert_eq!(elem2.pow(10), 16.into());
      }
 
+    fn field1_elem<T: Into<FieldElement<Mod1125899839733759Field, u64>>>(v: T) -> FieldElement<Mod1125899839733759Field, u64>
+    {
+        v.into()
+    }
+
      quickcheck! {
          fn number_div_by_self_equals_one(x: u64) -> TestResult {
              if x % 1125899839733759 == 0 {
                  TestResult::discard()
              } else {
-                let x_e: FieldElement<Mod1125899839733759Field, _> = (x % 1125899839733759).into();
+                let x_e = field1_elem(x);
 
                 TestResult::from_bool(x_e / x_e == 1.into())
              }
@@ -140,10 +145,40 @@ mod tests {
              if x % 1125899839733759 == 0 {
                  TestResult::discard()
              } else {
-                 let x_e: FieldElement<Mod1125899839733759Field, _> = (x % 1125899839733759).into();
+                let x_e = field1_elem(x);
 
-                 TestResult::from_bool(FieldElement::from(1) / x_e == x_e.into_value().inv(1125899839733759).into())
+                TestResult::from_bool(FieldElement::from(1) / x_e == x_e.into_value().inv(1125899839733759).into())
              }
+         }
+
+         fn field_multiplication_is_commutative(x: u64, y: u64) -> TestResult {
+             use arith::ModuleInv;
+
+             if x % 1125899839733759 == 0 {
+                 TestResult::discard()
+             } else {
+                let x_e = field1_elem(x);
+                let y_e = field1_elem(y);
+
+                TestResult::from_bool(
+                    x_e * y_e == y_e * x_e
+                )
+             }
+         }
+
+         fn field_multiplication_is_associative(x: u64, y: u64, z: u64) -> TestResult {
+             if x % 1125899839733759 == 0 {
+                 TestResult::discard()
+             } else {
+                let x_e = field1_elem(x);
+                let y_e = field1_elem(y);
+                let z_e = field1_elem(z);
+
+                TestResult::from_bool(
+                    (x_e + y_e) * z_e == y_e * z_e + x_e * z_e
+                )
+             }
+
          }
      }
 }
