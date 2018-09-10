@@ -40,12 +40,17 @@ impl<F: field::Field<Value=V>, V: arith::Value> MontgomeryElement<F, V> {
 
     /// Convert to regular form
     pub fn into_element(self) -> element::FieldElement<F, V> {
-        self.value.mul(F::R_INVERSE, F::MODULUS).into()
+        self.into_reduced_value().into()
     }
 
     /// Deconstruct and return raw value (not reduced)
     pub fn into_value(self) -> V {
         self.value
+    }
+
+    /// Deconstruct and return raw value (not reduced)
+    pub fn into_reduced_value(self) -> V {
+        self.value.mul(F::R_INVERSE, F::MODULUS)
     }
 
     /// Construct from raw value (should be reduced in advance)
@@ -113,7 +118,9 @@ impl<F: field::Field<Value=V>, V: arith::Value> From<V> for MontgomeryElement<F,
 mod tests {
 
     use {MontgomeryElement, FieldValue, MulScalar};
-    use test::Mod19Field;
+    use test::{Mod19Field, Mod1125899839733759Field};
+
+    use quickcheck::TestResult;
 
     #[test]
     fn smoky() {
@@ -147,5 +154,63 @@ mod tests {
          let elem1: MontgomeryElement<Mod19Field, _> = 6.into();
          assert_eq!(elem1.clone().into_value(), 1);
          assert_eq!(elem1.mul_scalar(2).into_value(), 2);
+     }
+
+    fn field1_elem<T: Into<MontgomeryElement<Mod1125899839733759Field, u64>>>(v: T) -> MontgomeryElement<Mod1125899839733759Field, u64>
+    {
+        v.into()
+    }
+
+     quickcheck! {
+         fn number_div_by_self_equals_one(x: u64) -> TestResult {
+             if x % 1125899839733759 == 0 {
+                 TestResult::discard()
+             } else {
+                let x_e = field1_elem(x);
+
+                TestResult::from_bool(x_e / x_e == 1.into())
+             }
+         }
+
+         fn one_div_number_equals_inverse(x: u64) -> TestResult {
+             use arith::ModuleInv;
+
+             if x % 1125899839733759 == 0 {
+                 TestResult::discard()
+             } else {
+                let x_e = field1_elem(x);
+
+                TestResult::from_bool(
+                    MontgomeryElement::from(1) / x_e == x_e.into_reduced_value().inv(1125899839733759).into()
+                )
+             }
+         }
+
+         fn field_multiplication_is_commutative(x: u64, y: u64) -> TestResult {
+             if x % 1125899839733759 == 0 {
+                 TestResult::discard()
+             } else {
+                let x_e = field1_elem(x);
+                let y_e = field1_elem(y);
+
+                TestResult::from_bool(
+                    x_e * y_e == y_e * x_e
+                )
+             }
+         }
+
+         fn field_multiplication_is_associative(x: u64, y: u64, z: u64) -> TestResult {
+             if x % 1125899839733759 == 0 {
+                 TestResult::discard()
+             } else {
+                let x_e = field1_elem(x);
+                let y_e = field1_elem(y);
+                let z_e = field1_elem(z);
+
+                TestResult::from_bool(
+                    (x_e + y_e) * z_e == y_e * z_e + x_e * z_e
+                )
+             }
+         }
      }
 }
