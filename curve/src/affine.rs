@@ -153,14 +153,14 @@ mod tests {
         assert_eq!(bp, (210159848059198, 473433224346301).into());
     }
 
-    // #[test]
-    // fn mul_montgomery() {
-    //     let p = U64MontgomeryCurve::generator();
+    #[test]
+    fn mul_montgomery() {
+        let p = U64MontgomeryCurve::generator();
 
-    //     let dp = p.clone() * 2;
-    //     assert_eq!(dp, (570768668753918, 222182780873386).into());
+        let dp = p.clone() * 2;
+        assert_eq!(dp, (570768668753918, 222182780873386).into());
 
-    //     let bp = p * 570768668753918;
-    //     assert_eq!(bp, (210159848059198, 473433224346301).into());
-    // }
+        let bp = p * 570768668753918;
+        assert_eq!(bp, (210159848059198, 473433224346301).into());
+    }
 }
