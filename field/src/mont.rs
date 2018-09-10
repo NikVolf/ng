@@ -87,7 +87,7 @@ impl<F: field::Field<Value=V>, V: arith::Value> Mul for MontgomeryElement<F, V> 
 
 impl<F: field::Field<Value=V>, V: arith::Value> arith::MulScalar for MontgomeryElement<F, V> {
     fn mul_scalar(self, other: u32) -> Self {
-        self.value.mul_scalar(other, F::MODULUS).into()
+        MontgomeryElement::from_raw(self.value.mul_scalar(other, F::MODULUS))
     }
 }
 
@@ -112,7 +112,7 @@ impl<F: field::Field<Value=V>, V: arith::Value> From<V> for MontgomeryElement<F,
 #[cfg(test)]
 mod tests {
 
-    use {MontgomeryElement, FieldValue};
+    use {MontgomeryElement, FieldValue, MulScalar};
     use test::Mod19Field;
 
     #[test]
@@ -140,5 +140,12 @@ mod tests {
 
         assert_eq!(elem1.pow(20), 17.into());
         assert_eq!(elem2.pow(10), 16.into());
+     }
+
+     #[test]
+     fn mul_scalar() {
+         let elem1: MontgomeryElement<Mod19Field, _> = 6.into();
+         assert_eq!(elem1.clone().into_value(), 1);
+         assert_eq!(elem1.mul_scalar(2).into_value(), 2);
      }
 }

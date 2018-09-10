@@ -63,7 +63,8 @@ impl<C: Curve> From<JacobianPoint<C>> for Point<C> {
     }
 }
 
-impl<C: Curve> ::std::ops::Add for Point<C>{
+impl<C: Curve> ::std::ops::Add for Point<C>
+{
     type Output = Self;
     fn add(self, other: Self) -> Self::Output {
         if self.is_infinity() && other.is_infinity() { return Self::infinity(); }
@@ -137,6 +138,15 @@ mod tests {
     }
 
     #[test]
+    fn double_mont() {
+        let p = U64MontgomeryCurve::generator() + U64MontgomeryCurve::generator();
+
+        println!("U64MontgomeryCurve::generator() = {:?}", U64MontgomeryCurve::generator());
+
+        assert_eq!(p, (570768668753918, 222182780873386).into());
+    }
+
+    #[test]
     fn mul() {
         let p = U64Curve::generator();
         let dp = p.clone() * 2;
@@ -145,12 +155,14 @@ mod tests {
         assert_eq!(bp, (210159848059198, 473433224346301).into());
     }
 
-    #[test]
-    fn mul_montgomery() {
-        let p = U64MontgomeryCurve::generator();
-        let dp = p.clone() * 2;
-        assert_eq!(dp, (570768668753918, 222182780873386).into());
-        let bp = p * 570768668753918;
-        assert_eq!(bp, (210159848059198, 473433224346301).into());
-    }
+    // #[test]
+    // fn mul_montgomery() {
+    //     let p = U64MontgomeryCurve::generator();
+
+    //     let dp = p.clone() * 2;
+    //     assert_eq!(dp, (570768668753918, 222182780873386).into());
+
+    //     let bp = p * 570768668753918;
+    //     assert_eq!(bp, (210159848059198, 473433224346301).into());
+    // }
 }

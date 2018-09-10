@@ -17,8 +17,8 @@ pub trait Field: Copy + Clone + PartialEq {
 
 pub trait FieldValue:
     Sized +
-    Copy +
     Clone +
+    Copy +
     PartialEq +
     Mul<Output=Self> +
     Add<Output=Self> +

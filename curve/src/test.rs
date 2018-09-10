@@ -40,8 +40,6 @@ impl Curve for U64MontgomeryCurve {
     }
 
     fn a() -> Self::Value {
-        use field::Field;
-
-        ((7 * U64Field::R_INVERSE) % U64Field::MODULUS).into()
+        7.into()
     }
 }
