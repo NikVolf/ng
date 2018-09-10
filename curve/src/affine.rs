@@ -141,8 +141,6 @@ mod tests {
     fn double_mont() {
         let p = U64MontgomeryCurve::generator() + U64MontgomeryCurve::generator();
 
-        println!("U64MontgomeryCurve::generator() = {:?}", U64MontgomeryCurve::generator());
-
         assert_eq!(p, (570768668753918, 222182780873386).into());
     }
 
