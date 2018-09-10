@@ -2,6 +2,7 @@
 use field::{FieldValue, MulScalar, Scalar};
 use {Curve, JacobianPoint};
 
+/// Affine point on the curve C
 #[derive(Clone, PartialEq, Debug)]
 pub struct Point<C: Curve> {
     x: C::Value,
@@ -9,6 +10,7 @@ pub struct Point<C: Curve> {
 }
 
 impl<C: Curve> Point<C> {
+    /// Point at infinity.
     pub fn infinity() -> Self {
         Point {
             x: C::Value::zero(),
@@ -16,22 +18,27 @@ impl<C: Curve> Point<C> {
         }
     }
 
+    /// Test if point is at infinity.
     pub fn is_infinity(&self) -> bool {
         self.x == C::Value::zero() && self.y == C::Value::zero()
     }
 
+    /// New point from two field elements
     pub fn new(x: C::Value, y: C::Value) -> Self {
         Point { x: x, y: y }
     }
 
+    /// Field element of X coordinate
     pub fn x(&self) -> C::Value {
         self.x
     }
 
+    /// Field element of Y coordinate
     pub fn y(&self) -> C::Value {
         self.y
     }
 
+    /// Deconstruct point into field elements (X, Y)
     pub fn into_parts(self) -> (C::Value, C::Value) {
         (self.x, self.y)
     }

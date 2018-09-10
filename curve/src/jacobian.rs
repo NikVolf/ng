@@ -1,6 +1,7 @@
 use field::{FieldValue, MulScalar, Scalar};
 use {Curve, AffinePoint};
 
+/// Point on the curve C in jacobian representation
 #[derive(Clone, Debug, PartialEq)]
 pub struct Point<C: Curve> {
     x: C::Value,
@@ -33,10 +34,12 @@ impl<I, C: Curve> From<(I, I, I)> for Point<C>
 }
 
 impl<C: Curve> Point<C> {
+    /// Deconstruct point into (X, Y, Z) parts
     pub fn into_parts(self) -> (C::Value, C::Value, C::Value) {
         (self.x, self.y, self.z)
     }
 
+    /// New point at infinity
     pub fn infinity() -> Self {
         Point {
             x: C::Value::zero(),
@@ -45,6 +48,7 @@ impl<C: Curve> Point<C> {
         }
     }
 
+    /// Test if point is at infinity
     pub fn is_infinity(&self) -> bool {
         self.z == C::Value::zero()
     }
