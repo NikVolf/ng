@@ -103,7 +103,7 @@ impl<I: Into<Point<C>>, C: Curve> ::std::ops::Add<I> for Point<C>
                 let s = x1 * 4 * y1.squared();
 
                 // M = 3*X^2 + a*Z^4
-                // Curve over montgomery field elements should have C::a() in regular form!
+                // Curve over montgomery field elements should have C::a() in montgomery form!
                 let m = x1.squared() * 3 + C::a() * (z1.squared().squared());
 
                 // X' = M^2 - 2*S
