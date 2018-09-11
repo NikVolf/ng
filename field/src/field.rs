@@ -1,7 +1,7 @@
 //! Abstract field
 
 use std::ops::{Add, Mul, Sub, Div};
-use arith::{Value, MulScalar};
+use arith::Value;
 
 /// Abstract field description
 pub trait Field: Copy + Clone + PartialEq {
@@ -22,10 +22,10 @@ pub trait FieldValue:
     Copy +
     PartialEq +
     Mul<Output=Self> +
+    Mul<u32, Output=Self> +
     Add<Output=Self> +
     Div<Output=Self> +
-    Sub<Output=Self> +
-    MulScalar
+    Sub<Output=Self>
 {
     /// Inner scalar value type of field element
     type Value: Value;

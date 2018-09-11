@@ -48,8 +48,8 @@ impl ModuleInv for u64 {
     }
 }
 
-impl ModuleMulScalar for u64 {
-    fn mul_scalar(self, scalar: u32, module: Self) -> Self {
+impl ModuleMul<u32> for u64 {
+    fn mul(self, scalar: u32, module: Self) -> Self {
         self.mul(scalar as u64, module)
     }
 }

@@ -1,4 +1,4 @@
-use field::{FieldValue, MulScalar, Scalar};
+use field::{FieldValue, Scalar};
 use {Curve, AffinePoint};
 
 /// Point on the curve C in jacobian representation
@@ -70,7 +70,10 @@ impl<I: Scalar, C: Curve> ::std::ops::Mul<I> for Point<C>
     }
 }
 
-impl<I: Into<Point<C>>, C: Curve> ::std::ops::Add<I> for Point<C> {
+impl<I: Into<Point<C>>, C: Curve> ::std::ops::Add<I> for Point<C>
+    // this is unneeded compiler hint
+    where C::Value: ::std::ops::Mul<Output=C::Value> + ::std::ops::Mul<u32, Output=C::Value>
+{
     type Output = Self;
     fn add(self, other: I) -> Self {
         let other: Point<C> = other.into();
@@ -97,20 +100,20 @@ impl<I: Into<Point<C>>, C: Curve> ::std::ops::Add<I> for Point<C> {
             if s1 != s2 { return Self::infinity(); }
             else {
                 // S = 4*X*Y^2
-                let s = x1.mul_scalar(4) * y1.squared();
+                let s = x1 * 4 * y1.squared();
 
                 // M = 3*X^2 + a*Z^4
                 // Curve over montgomery field elements should have C::a() in regular form!
-                let m = x1.squared().mul_scalar(3) + C::a() * (z1.squared().squared());
+                let m = x1.squared() * 3 + C::a() * (z1.squared().squared());
 
                 // X' = M^2 - 2*S
-                let x = m.squared() - s.mul_scalar(2);
+                let x = m.squared() - s * 2;
 
                 // Y' = M*(S - X') - 8*Y^4
-                let y = m * (s - x) - y1.squared().squared().mul_scalar(8);
+                let y = m * (s - x) - y1.squared().squared() * 8;
 
                 // Z' = 2*Y*Z
-                let z = (y1 * z1).mul_scalar(2);
+                let z = (y1 * z1) * 2;
 
                 return (x, y, z).into()
             }
@@ -125,7 +128,7 @@ impl<I: Into<Point<C>>, C: Curve> ::std::ops::Add<I> for Point<C> {
         let h3 = h2 * h;
 
         // X3 = R^2 - H^3 - 2*U1*H^2
-        let x3 = r.squared() - h3 - u1*h2.mul_scalar(2);
+        let x3 = r.squared() - h3 - u1*h2 * 2;
 
         // Y3 = R*(U1*H^2 - X3) - S1*H^3
         let y3 = r * (u1 * h2 - x3) - s1 * h3;

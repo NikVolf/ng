@@ -1,5 +1,5 @@
 
-use field::{FieldValue, MulScalar, Scalar};
+use field::{FieldValue, Scalar};
 use {Curve, JacobianPoint};
 
 /// Affine point on the curve C
@@ -55,7 +55,10 @@ impl<I, C: Curve> From<(I, I)> for Point<C>
     }
 }
 
-impl<C: Curve> From<JacobianPoint<C>> for Point<C> {
+impl<C: Curve> From<JacobianPoint<C>> for Point<C>
+    // this is unneeded compiler hint
+    where C::Value: ::std::ops::Mul<Output=C::Value> + ::std::ops::Mul<u32, Output=C::Value>
+{
     fn from(p: JacobianPoint<C>) -> Self {
         let (x, y, z) = p.into_parts();
 
@@ -71,6 +74,8 @@ impl<C: Curve> From<JacobianPoint<C>> for Point<C> {
 }
 
 impl<C: Curve> ::std::ops::Add for Point<C>
+    // this is unneeded compiler hint
+    where C::Value: ::std::ops::Mul<Output=C::Value> + ::std::ops::Mul<u32, Output=C::Value>
 {
     type Output = Self;
     fn add(self, other: Self) -> Self::Output {
@@ -91,8 +96,8 @@ impl<C: Curve> ::std::ops::Add for Point<C>
                 return Self::infinity();
             }
 
-            let l = (x1.squared().mul_scalar(3) + C::a()) / y1.mul_scalar(2);
-            let x = l.squared() - x1.mul_scalar(2);
+            let l = (x1.squared() * 3 + C::a()) / (y1 * 2);
+            let x = l.squared() - x1 * 2;
 
             return (x, l * (x1 - x) - y1).into();
         }

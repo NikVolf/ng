@@ -1,9 +1,9 @@
 //! Abstract arithmetic
 
 /// Modular multiplication.
-pub trait ModuleMul {
+pub trait ModuleMul<T=Self> {
     /// Multiplication of self by other of the same type
-    fn mul(self, other: Self, module: Self) -> Self;
+    fn mul(self, other: T, module: Self) -> Self;
 }
 
 /// Modular addition
@@ -28,18 +28,6 @@ pub trait ModuleInv {
 pub trait MulReduce {
     /// Modular multiplication followed by reduction
     fn mul_reduce(self, other: Self, module: Self, r_inverse: Self) -> Self;
-}
-
-/// Modular multiplication by u32 scalar
-pub trait ModuleMulScalar {
-    /// Modular multipliy arithmetic value by u32 scalar
-    fn mul_scalar(self, other: u32, module: Self) -> Self;
-}
-
-/// Multiplication by u32 scalar
-pub trait MulScalar {
-    /// Multipliy arithmetic value by u32 scalar
-    fn mul_scalar(self, other: u32) -> Self;
 }
 
 pub struct BitsIterator<'a, T: 'a + Value> {
@@ -68,7 +56,7 @@ pub trait Value:
     PartialEq +
     ModuleAdd +
     ModuleMul +
-    ModuleMulScalar +
+    ModuleMul<u32> +
     ModuleNeg +
     ModuleInv +
     MulReduce +
