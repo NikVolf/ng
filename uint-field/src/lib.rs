@@ -87,7 +87,7 @@ mod tests {
     pub struct BtcField;
 
     use {bigint, field};
-    use field::{FieldElement, FieldValue};
+    use field::FieldElement;
     use super::U256;
 
     impl field::Field for BtcField {
@@ -119,7 +119,7 @@ mod tests {
             "115792089237316195423570985008687907853269984665640564039457584007908834671663"
         );
 
-        assert_eq!(p1, FieldElement::<BtcField, U256>::zero())
+        assert_eq!(p1, BtcField::from_str("0"))
     }
 
     #[test]
@@ -128,7 +128,7 @@ mod tests {
             "115792089237316195423570985008687907853269984665640564039457584007908834671662"
         );
 
-        assert_eq!(p1 + p1, p1 - U256::from("2").into())
+        assert_eq!(p1 + p1, p1 - BtcField::from_str("2"))
     }
 
     #[test]
