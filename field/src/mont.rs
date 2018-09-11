@@ -174,7 +174,7 @@ mod tests {
          }
 
         fn one_div_number_equals_inverse(x: u64) -> TestResult {
-            use arith::ModuleInv;
+            use arith::ModInv;
 
             if x % 1125899839733759 == 0 {
                  TestResult::discard()

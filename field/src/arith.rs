@@ -1,25 +1,25 @@
 //! Abstract arithmetic
 
 /// Modular multiplication.
-pub trait ModuleMul<T=Self> {
+pub trait ModMul<T=Self> {
     /// Multiplication of self by other of the same type
     fn mul(self, other: T, module: Self) -> Self;
 }
 
 /// Modular addition
-pub trait ModuleAdd {
+pub trait ModAdd {
     /// Addition of self with other of the same type
     fn add(self, other: Self, module: Self) -> Self;
 }
 
 /// Modular negation
-pub trait ModuleNeg {
+pub trait ModNeg {
     /// Negation of self by the modulus
     fn neg(self, module: Self) -> Self;
 }
 
 /// Modular multiplicative inverse
-pub trait ModuleInv {
+pub trait ModInv {
     /// Calculate modular multiplicative inverse
     fn inv(self, module: Self) -> Self;
 }
@@ -54,11 +54,11 @@ pub trait Value:
     Clone +
     Copy +
     PartialEq +
-    ModuleAdd +
-    ModuleMul +
-    ModuleMul<u32> +
-    ModuleNeg +
-    ModuleInv +
+    ModAdd +
+    ModMul +
+    ModMul<u32> +
+    ModNeg +
+    ModInv +
     MulReduce +
     ::std::ops::Rem<Output=Self>
 {

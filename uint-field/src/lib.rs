@@ -1,12 +1,12 @@
 extern crate bigint;
 extern crate pcurve_field as field;
 
-use field::{MulReduce, ModuleMul, ModuleAdd, ModuleNeg, ModuleInv, Scalar};
+use field::{MulReduce, ModMul, ModAdd, ModNeg, ModInv, Scalar};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct U256(bigint::U256);
 
-impl ModuleMul for U256 {
+impl ModMul for U256 {
     fn mul(self, other: Self, module: Self) -> Self {
         U256(
             (bigint::U512::from(self.0) * bigint::U512::from(other.0) % bigint::U512::from(module.0)).into()
@@ -14,7 +14,7 @@ impl ModuleMul for U256 {
     }
 }
 
-impl ModuleAdd for U256 {
+impl ModAdd for U256 {
     fn add(self, other: Self, module: Self) -> Self {
         let (res, overflow) = self.0.overflowing_add(other.0);
         if overflow {
@@ -31,19 +31,19 @@ impl MulReduce for U256 {
     }
 }
 
-impl ModuleNeg for U256 {
+impl ModNeg for U256 {
     fn neg(self, module: Self) -> Self {
         U256(module.0 - (self.0 % module.0))
     }
 }
 
-impl ModuleInv for U256 {
+impl ModInv for U256 {
     fn inv(self, module: Self) -> Self {
         U256(self.0.mod_inverse(module.0))
     }
 }
 
-impl ModuleMul<u32> for U256 {
+impl ModMul<u32> for U256 {
     fn mul(self, scalar: u32, module: Self) -> Self {
         // todo: overflow?
         self.mul(U256(scalar.into()), module)

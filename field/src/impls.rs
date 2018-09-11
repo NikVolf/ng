@@ -1,6 +1,6 @@
 use arith::*;
 
-impl ModuleMul for u64 {
+impl ModMul for u64 {
     fn mul(self, other: Self, module: Self) -> Self {
         ((self as u128) * (other as u128) % (module as u128)) as u64
     }
@@ -12,7 +12,7 @@ impl MulReduce for u64 {
     }
 }
 
-impl ModuleAdd for u64 {
+impl ModAdd for u64 {
     fn add(self, other: Self, module: Self) -> Self {
         let (res, overflow) = self.overflowing_add(other);
         if overflow {
@@ -23,13 +23,13 @@ impl ModuleAdd for u64 {
     }
 }
 
-impl ModuleNeg for u64 {
+impl ModNeg for u64 {
     fn neg(self, module: Self) -> Self {
         module - (self % module)
     }
 }
 
-impl ModuleInv for u64 {
+impl ModInv for u64 {
     fn inv(self, module: Self) -> Self {
 		let mut mn = (module, self);
 		let mut xy = (0, 1);
@@ -48,7 +48,7 @@ impl ModuleInv for u64 {
     }
 }
 
-impl ModuleMul<u32> for u64 {
+impl ModMul<u32> for u64 {
     fn mul(self, scalar: u32, module: Self) -> Self {
         self.mul(scalar as u64, module)
     }
