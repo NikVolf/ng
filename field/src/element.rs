@@ -174,7 +174,7 @@ mod tests {
                 let z_e = field1_elem(z);
 
                 TestResult::from_bool(
-                    (x_e + y_e) * z_e == y_e * z_e + x_e * z_e
+                    x_e * (y_e * z_e) == (x_e * y_e) * z_e
                 )
             }
          }
