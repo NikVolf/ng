@@ -177,6 +177,20 @@ mod tests {
                     x_e * (y_e * z_e) == (x_e * y_e) * z_e
                 )
             }
-         }
+        }
+
+        fn field_mul_add_distributive(x: u64, y: u64, z: u64) -> TestResult {
+            if x % 1125899839733759 == 0 {
+                 TestResult::discard()
+            } else {
+                let x_e = field1_elem(x);
+                let y_e = field1_elem(y);
+                let z_e = field1_elem(z);
+
+                TestResult::from_bool(
+                    x_e * (y_e + z_e) == (x_e * y_e) + (x_e * z_e)
+                )
+            }
+        }
      }
 }
