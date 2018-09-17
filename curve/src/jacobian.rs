@@ -42,7 +42,7 @@ impl<C: Curve> Point<C> {
     /// New point at infinity
     pub fn infinity() -> Self {
         Point {
-            x: C::Value::zero(),
+            x: C::Value::one(),
             y: C::Value::one(),
             z: C::Value::zero(),
         }
