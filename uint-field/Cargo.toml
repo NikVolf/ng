@@ -9,3 +9,4 @@ pcurve-field = { path = "../field" }
 
 [dev-dependencies]
 quickcheck = "0.7"
+curve = { path = "../curve" }

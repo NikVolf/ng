@@ -6,6 +6,12 @@ use field::{MulReduce, ModMul, ModAdd, ModNeg, ModInv, Scalar};
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct U256(bigint::U256);
 
+impl U256 {
+    pub fn from_raw(v: [u64; 4]) -> Self {
+        U256(bigint::U256(v))
+    }
+}
+
 impl ModMul for U256 {
     fn mul(self, other: Self, module: Self) -> Self {
         U256(
@@ -83,11 +89,16 @@ impl Scalar for U256 {
 
 #[cfg(test)]
 mod tests {
+
+    extern crate curve;
+
+    use self::curve::{Curve, JacobianPoint, AffinePoint};
+
     #[derive(Clone, Copy, PartialEq, Debug)]
     pub struct BtcField;
 
     use {bigint, field};
-    use field::FieldElement;
+    use field::{FieldElement, FieldValue};
     use super::U256;
 
     impl field::Field for BtcField {
@@ -111,6 +122,32 @@ mod tests {
         fn from_str(v: &'static str) -> FieldElement<Self, U256> {
             U256::from(v).into()
         }
+    }
+
+    #[derive(Clone, Copy, Debug, PartialEq)]
+    struct BtcCurve;
+
+    impl Curve for BtcCurve {
+        type Value = FieldElement<BtcField, U256>;
+
+        fn generator() -> AffinePoint<Self> {
+            (
+                U256::from_raw([
+                    0x59F2815B16F81798,
+                    0x029BFCDB2DCE28D9,
+                    0x55A06295CE870B07,
+                    0x79BE667EF9DCBBAC,
+                ]),
+                U256::from_raw([
+                    0x9C47D08FFB10D4B8,
+                    0xFD17B448A6855419,
+                    0x5DA4FBFC0E1108A8,
+                    0x483ADA7726A3C465,
+                ])
+            ).into()
+        }
+
+        fn a() -> Self::Value { Self::Value::zero() }
     }
 
     #[test]
@@ -142,6 +179,21 @@ mod tests {
         assert_eq!(
             p1 * BtcField::from_str("10"),
             -BtcField::from_str("10"),
+        );
+    }
+
+    #[test]
+    fn curve_add() {
+
+        let p1 = BtcCurve::generator();
+
+        let p2 = p1.clone() + p1.clone();
+
+        assert_eq!(p2,
+            (
+                BtcField::from_str("89565891926547004231252920425935692360644145829622209833684329913297188986597"),
+                BtcField::from_str("12158399299693830322967808612713398636155367887041628176798871954788371653930"),
+            ).into()
         );
     }
 }
