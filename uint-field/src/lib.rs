@@ -191,11 +191,21 @@ mod tests {
             "115792089237316195423570985008687907853269984665640564039457584007908834671662"
         );
 
-        // P - 1 * 10 = - 10
+        // (P - 1) * 10 = -10
         assert_eq!(
             p1 * BtcField::from_str("10"),
             -BtcField::from_str("10"),
         );
+    }
+
+    #[test]
+    fn field4() {
+        let p1 = -BtcField::from_str("1");
+
+        assert_eq!(
+            p1*p1,
+            BtcField::from_str("1")
+        )
     }
 
     #[test]
