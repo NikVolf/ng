@@ -29,6 +29,22 @@ impl Curve for U64Curve {
 }
 
 #[derive(Clone, Copy, PartialEq, Debug)]
+pub struct U64KoblitzCurve;
+
+/// y^2 = x^3 + 41 over Fp mod 1125899839733759
+impl Curve for U64KoblitzCurve {
+    type Value = field::FieldElement<U64Field, u64>;
+
+    fn generator() -> AffinePoint<Self> {
+        (2, 7).into()
+    }
+
+    fn a() -> Self::Value {
+        0.into()
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub struct U64MontgomeryCurve;
 
 /// y^2 = x^3 + 7x + 14 over Fp mod 1125899839733759

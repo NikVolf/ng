@@ -129,7 +129,7 @@ impl<I: Scalar, C: Curve> ::std::ops::Mul<I> for Point<C>
 #[cfg(test)]
 mod tests {
 
-    use test::{U64Curve, U64MontgomeryCurve};
+    use test::{U64Curve, U64MontgomeryCurve, U64KoblitzCurve};
     use Curve;
 
     #[test]
@@ -174,5 +174,13 @@ mod tests {
 
         let bp = p * 570768668753918;
         assert_eq!(bp, (210159848059198, 473433224346301).into());
+    }
+
+    #[test]
+    fn koblitz() {
+        let p = U64KoblitzCurve::generator();
+
+        let dp = p.clone() * 2;
+        assert_eq!(dp, (344663216245025, 347945723066407).into());
     }
 }
