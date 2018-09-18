@@ -1,5 +1,6 @@
 extern crate bigint;
 extern crate pcurve_field as field;
+#[cfg(test)] #[macro_use] extern crate quickcheck;
 
 use field::{MulReduce, ModMul, ModAdd, ModNeg, ModInv, Scalar};
 
@@ -97,9 +98,16 @@ mod tests {
     #[derive(Clone, Copy, PartialEq, Debug)]
     pub struct BtcField;
 
+    use quickcheck::{TestResult, Arbitrary, Gen};
     use {bigint, field};
     use field::{FieldElement, FieldValue};
     use super::U256;
+
+    impl Arbitrary for U256 {
+        fn arbitrary<G: Gen>(g: &mut G) -> Self {
+            U256::from_raw([u64::arbitrary(g), u64::arbitrary(g), u64::arbitrary(g), u64::arbitrary(g)])
+        }
+    }
 
     impl field::Field for BtcField {
         type Value = U256;
@@ -121,6 +129,10 @@ mod tests {
     impl BtcField {
         fn from_str(v: &'static str) -> FieldElement<Self, U256> {
             U256::from(v).into()
+        }
+
+        fn from_u64(x: u64) -> FieldElement<Self, U256> {
+            U256(x.into()).into()
         }
     }
 
@@ -191,17 +203,54 @@ mod tests {
 
         let p1 = BtcCurve::generator();
 
+        assert_eq!(
+            p1,
+            (
+                BtcField::from_str("55066263022277343669578718895168534326250603453777594175500187360389116729240"),
+                BtcField::from_str("32670510020758816978083085130507043184471273380659243275938904335757337482424"),
+            ).into()
+        );
+
         let p2: AffinePoint<BtcCurve> =
             (
                 BtcField::from_str("89565891926547004231252920425935692360644145829622209833684329913297188986597"),
                 BtcField::from_str("12158399299693830322967808612713398636155367887041628176798871954788371653930"),
             ).into();
 
-        assert_eq!(p2.clone() + p2.clone(),
+        assert_eq!(p1 + p2,
             (
                 BtcField::from_str("89565891926547004231252920425935692360644145829622209833684329913297188986597"),
                 BtcField::from_str("12158399299693830322967808612713398636155367887041628176798871954788371653930"),
             ).into()
         );
+    }
+
+    quickcheck! {
+        fn number_div_by_self_equals_one(x: U256) -> TestResult {
+            use field::Field;
+
+            if x % BtcField::MODULUS == U256(0.into()) {
+                TestResult::discard()
+            } else {
+                let x_e: FieldElement<BtcField, _> = x.into();
+
+                TestResult::from_bool(x_e / x_e == BtcField::from_u64(1))
+            }
+        }
+
+        fn one_div_number_equals_inverse(x: U256) -> TestResult {
+            use field::{Field, ModInv};
+
+            if x % BtcField::MODULUS == U256(0.into()) {
+                TestResult::discard()
+            } else {
+                let x_e: FieldElement<BtcField, _> = x.into();
+
+                TestResult::from_bool(
+                    BtcField::from_u64(1) / x_e ==
+                    x_e.into_value().inv(BtcField::MODULUS).into()
+                )
+            }
+        }
     }
 }
