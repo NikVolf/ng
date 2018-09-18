@@ -4,7 +4,7 @@ use std::ops::{Add, Mul, Sub, Div};
 use arith::Value;
 
 /// Abstract field description
-pub trait Field: Copy + Clone + PartialEq {
+pub trait Field: Copy + Clone + PartialEq + ::std::fmt::Debug {
     /// Type of scalar
     type Value;
     /// Field modulus
@@ -21,6 +21,7 @@ pub trait FieldValue:
     Clone +
     Copy +
     PartialEq +
+    ::std::fmt::Debug +
     Mul<Output=Self> +
     Mul<u32, Output=Self> +
     Add<Output=Self> +

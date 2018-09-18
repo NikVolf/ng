@@ -23,12 +23,9 @@ impl ModMul for U256 {
 
 impl ModAdd for U256 {
     fn add(self, other: Self, module: Self) -> Self {
-        let (res, overflow) = self.0.overflowing_add(other.0);
-        if overflow {
-            U256(bigint::U256::max_value() % module.0 + 1.into())
-        } else {
-            U256(res % module.0)
-        }
+        U256(
+            ((bigint::U512::from(self.0) + bigint::U512::from(other.0)) % bigint::U512::from(module.0)).into()
+        )
     }
 }
 
@@ -93,7 +90,7 @@ mod tests {
 
     extern crate curve;
 
-    use self::curve::{Curve, JacobianPoint, AffinePoint};
+    use self::curve::{Curve, AffinePoint};
 
     #[derive(Clone, Copy, PartialEq, Debug)]
     pub struct BtcField;
@@ -112,6 +109,7 @@ mod tests {
     impl field::Field for BtcField {
         type Value = U256;
 
+        // 115792089237316195423570985008687907853269984665640564039457584007908834671663
         const MODULUS: U256 = U256(bigint::U256(
             [
                 0xFFFFFFFEFFFFFC2F,
@@ -181,7 +179,7 @@ mod tests {
             "115792089237316195423570985008687907853269984665640564039457584007908834671662"
         );
 
-        assert_eq!(p1 + p1, p1 - BtcField::from_str("2"))
+        assert_eq!(p1 + p1, p1 - BtcField::from_str("1"))
     }
 
     #[test]
@@ -209,6 +207,17 @@ mod tests {
     }
 
     #[test]
+    fn field5() {
+        let p1 = BtcField::from_str("44828909320452647301050893743220441820626641267700871452737776290545709136354");
+        let p2 = BtcField::from_str("32670510020758816978083085130507043184471273380659243275938904335757337482424");
+
+        assert_eq!(
+            p1 - p2,
+            BtcField::from_str("12158399299693830322967808612713398636155367887041628176798871954788371653930")
+        )
+    }
+
+    #[test]
     fn curve_add() {
 
         let p1 = BtcCurve::generator();
@@ -221,11 +230,7 @@ mod tests {
             ).into()
         );
 
-        let p2: AffinePoint<BtcCurve> =
-            (
-                BtcField::from_str("89565891926547004231252920425935692360644145829622209833684329913297188986597"),
-                BtcField::from_str("12158399299693830322967808612713398636155367887041628176798871954788371653930"),
-            ).into();
+        let p2 = p1.clone();
 
         assert_eq!(p1 + p2,
             (

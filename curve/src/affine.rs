@@ -75,7 +75,9 @@ impl<C: Curve> From<JacobianPoint<C>> for Point<C>
 
 impl<C: Curve> ::std::ops::Add for Point<C>
     // this is unneeded compiler hint
-    where C::Value: ::std::ops::Mul<Output=C::Value> + ::std::ops::Mul<u32, Output=C::Value>
+    where C::Value:
+        ::std::ops::Mul<Output=C::Value>
+        + ::std::ops::Mul<u32, Output=C::Value>
 {
     type Output = Self;
     fn add(self, other: Self) -> Self::Output {
@@ -97,9 +99,11 @@ impl<C: Curve> ::std::ops::Add for Point<C>
             }
 
             let l = (x1.squared() * 3 + C::a()) / (y1 * 2);
-            let x = l.squared() - x1 * 2;
 
-            return (x, l * (x1 - x) - y1).into();
+            let x = l.squared() - x1 * 2;
+            let y = l * (x1 - x) - y1;
+
+            return (x, y).into();
         }
 
         let l = (y2 - y1) / (x2 - x1);
@@ -185,5 +189,8 @@ mod tests {
 
         let dp = p.clone() * 3;
         assert_eq!(dp, (229631876453125, 156063304284707).into());
+
+        let dp = p.clone() * 344663216245025;
+        assert_eq!(dp, (571162074095689, 745841699023671).into());
     }
 }

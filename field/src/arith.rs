@@ -54,6 +54,7 @@ pub trait Value:
     Clone +
     Copy +
     PartialEq +
+    ::std::fmt::Debug +
     ModAdd +
     ModMul +
     ModMul<u32> +
