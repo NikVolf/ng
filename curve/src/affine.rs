@@ -182,5 +182,8 @@ mod tests {
 
         let dp = p.clone() * 2;
         assert_eq!(dp, (344663216245025, 347945723066407).into());
+
+        let dp = p.clone() * 3;
+        assert_eq!(dp, (229631876453125, 156063304284707).into());
     }
 }
