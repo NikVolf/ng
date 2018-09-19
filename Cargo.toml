@@ -9,5 +9,6 @@ authors = ["NikVolf <nikvolf@gmail.com>"]
 members = [
     "./field",
     "./curve",
-    "./uint-field"
+    "./uint-field",
+    "./reference/secp256k1"
 ]

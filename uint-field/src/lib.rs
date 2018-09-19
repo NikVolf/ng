@@ -5,7 +5,7 @@ extern crate pcurve_field as field;
 use field::{MulReduce, ModMul, ModAdd, ModNeg, ModInv, Scalar};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct U256(bigint::U256);
+pub struct U256(pub bigint::U256);
 
 impl U256 {
     pub fn from_raw(v: [u64; 4]) -> Self {
@@ -88,16 +88,12 @@ impl Scalar for U256 {
 #[cfg(test)]
 mod tests {
 
-    extern crate curve;
-
-    use self::curve::{Curve, AffinePoint};
-
     #[derive(Clone, Copy, PartialEq, Debug)]
     pub struct BtcField;
 
     use quickcheck::{TestResult, Arbitrary, Gen};
     use {bigint, field};
-    use field::{FieldElement, FieldValue};
+    use field::FieldElement;
     use super::U256;
 
     impl Arbitrary for U256 {
@@ -132,36 +128,6 @@ mod tests {
         fn from_u64(x: u64) -> FieldElement<Self, U256> {
             U256(x.into()).into()
         }
-    }
-
-    #[derive(Clone, Copy, Debug, PartialEq)]
-    struct BtcCurve;
-
-    impl Curve for BtcCurve {
-        type Value = FieldElement<BtcField, U256>;
-
-        //
-        // 55066263022277343669578718895168534326250603453777594175500187360389116729240,
-        // 32670510020758816978083085130507043184471273380659243275938904335757337482424
-        //
-        fn generator() -> AffinePoint<Self> {
-            (
-                U256::from_raw([
-                    0x59F2815B16F81798,
-                    0x029BFCDB2DCE28D9,
-                    0x55A06295CE870B07,
-                    0x79BE667EF9DCBBAC,
-                ]),
-                U256::from_raw([
-                    0x9C47D08FFB10D4B8,
-                    0xFD17B448A6855419,
-                    0x5DA4FBFC0E1108A8,
-                    0x483ADA7726A3C465,
-                ])
-            ).into()
-        }
-
-        fn a() -> Self::Value { Self::Value::zero() }
     }
 
     #[test]
@@ -214,37 +180,6 @@ mod tests {
         assert_eq!(
             p1 - p2,
             BtcField::from_str("12158399299693830322967808612713398636155367887041628176798871954788371653930")
-        )
-    }
-
-    #[test]
-    fn curve_add() {
-
-        let p1 = BtcCurve::generator();
-
-        assert_eq!(
-            p1,
-            (
-                BtcField::from_str("55066263022277343669578718895168534326250603453777594175500187360389116729240"),
-                BtcField::from_str("32670510020758816978083085130507043184471273380659243275938904335757337482424"),
-            ).into()
-        );
-
-        let p2 = p1.clone();
-
-        assert_eq!(p1.clone() + p2,
-            (
-                BtcField::from_str("89565891926547004231252920425935692360644145829622209833684329913297188986597"),
-                BtcField::from_str("12158399299693830322967808612713398636155367887041628176798871954788371653930"),
-            ).into()
-        );
-
-        let scalar = U256::from("344663216245025");
-        assert_eq!(p1 * scalar,
-            (
-                BtcField::from_str("105473174440024184228310564028979217580645191183743091203649835187059270886300"),
-                BtcField::from_str("99555671613707051310000045784691741812112923881629020199414035212856909443470"),
-            ).into()
         )
     }
 
