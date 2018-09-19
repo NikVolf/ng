@@ -39,7 +39,7 @@ impl Secp256k1Field {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-struct Secp256k1Curve;
+pub struct Secp256k1Curve;
 
 impl Curve for Secp256k1Curve {
     type Value = FieldElement<Secp256k1Field, U256>;
