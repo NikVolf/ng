@@ -10,5 +10,6 @@ members = [
     "./field",
     "./curve",
     "./uint-field",
-    "./reference/secp256k1"
+    "./reference/secp256k1",
+    "./reference/p256"
 ]
