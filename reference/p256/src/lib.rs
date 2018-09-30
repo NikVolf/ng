@@ -49,6 +49,10 @@ impl P256Field {
         U256::from(v).into()
     }
 
+    pub fn from_hex(v: &'static str) -> MontgomeryElement<Self, U256> {
+        U256::from_hex(v).into()
+    }
+
     pub fn from_u64(x: u64) -> MontgomeryElement<Self, U256> {
         U256(x.into()).into()
     }
@@ -96,7 +100,8 @@ impl Curve for P256Curve {
 mod tests {
 
     use super::{P256Curve, P256Field};
-    use curve::Curve;
+    use curve::{Curve, JacobianPoint, AffinePoint};
+    use uint::U256;
 
     #[test]
     fn curve_add() {
@@ -126,6 +131,23 @@ mod tests {
             (
                 P256Field::from_str("42877656971275811310262564894490210024759287182177196162425349131675946712428"),
                 P256Field::from_str("61154801112014214504178281461992570017247172004704277041681093927569603776562"),
+            ).into()
+        );
+    }
+
+    #[test]
+    fn curve_mul() {
+        let p1: JacobianPoint<_> = P256Curve::generator().into();
+
+        let scalar = U256::from("115792089210356248762697446949407573529996955224135760342422259061068512044361");
+        let pn = p1 * scalar;
+
+        let pn_affine: AffinePoint<_> = pn.into();
+
+        assert_eq!(pn_affine,
+            (
+                P256Field::from_hex("62D9779DBEE9B0534042742D3AB54CADC1D238980FCE97DBB4DD9DC1DB6FB393"),
+                P256Field::from_hex("52A533416E1627DCB00EA288EE98311F5D12AE0A4418958725ABF595F0F66A81"),
             ).into()
         );
     }

@@ -11,6 +11,11 @@ impl U256 {
     pub fn from_raw(v: [u64; 4]) -> Self {
         U256(bigint::U256(v))
     }
+
+    pub fn from_hex(v: &'static str) -> Self {
+        use std::str::FromStr;
+        U256(bigint::U256::from_str(v).unwrap())
+    }
 }
 
 impl ModMul for U256 {
