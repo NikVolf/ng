@@ -1,0 +1,10 @@
+[package]
+name = "pcurve-polynomial"
+version = "0.1.0"
+authors = ["NikVolf <nikvolf@gmail.com>"]
+
+[dependencies]
+pcurve-field = { path = "../field" }
+
+[dev-dependencies]
+quickcheck = "0.7"

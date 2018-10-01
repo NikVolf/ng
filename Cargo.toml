@@ -11,5 +11,6 @@ members = [
     "./curve",
     "./uint-field",
     "./reference/secp256k1",
-    "./reference/p256"
+    "./reference/p256",
+    "./polynomial"
 ]
