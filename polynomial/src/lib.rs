@@ -1,6 +1,6 @@
 extern crate pcurve_field as field;
 
-use std::ops::{Mul, Add, Neg};
+use std::ops::{Mul, Add};
 use field::FieldElement;
 
 #[derive(Clone, PartialEq, Debug)]
@@ -35,17 +35,26 @@ impl<F: field::Field<Value=T>, T: field::Scalar> Polynomial<F, T> {
 }
 
 impl<F: field::Field<Value=T>, T: field::Scalar> Mul for Polynomial<F, T>
-    where T: Mul<Output=T>
+    where T: Mul<Output=T>, T: Add<Output=T>
 {
     type Output = Self;
 
     fn mul(self, other: Self) -> Self {
-        let mut result = Vec::new();
-        for self_c in self.coefs.into_iter() {
-            for other_c in other.coefs.iter() {
-                result.push(self_c * other_c.clone());
+        let order = self.coefs.len().max(other.coefs.len());
+
+        let mut result = Vec::with_capacity(order*2);
+        result.resize(order*2, T::zero());
+
+        for i in 0..order {
+            for j in 0..order {
+                let c_order = i + j;
+
+                result[c_order] = result[c_order] +
+                    self.coefs.get(i).unwrap_or(&T::zero()).clone() *
+                    other.coefs.get(j).unwrap_or(&T::zero()).clone();
             }
         }
+
         Self::new(result)
     }
 }
@@ -71,15 +80,15 @@ mod tests {
         let p1: Polynomial<Mod1125899839733759Field, _> = Polynomial::new(vec![5, 1]);
         let p2: Polynomial<Mod1125899839733759Field, _> = Polynomial::new(vec![1, 1]);
 
-        let pN = p1 * p2;
+        let pn = p1 * p2;
 
         assert_eq!(
-            pN.clone().eval(1),
+            pn.clone().eval(1),
             12.into(),
         );
 
         assert_eq!(
-            pN.eval(2),
+            pn.eval(2),
             21.into(),
         );
     }
