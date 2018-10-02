@@ -1,8 +1,13 @@
+//! Polynomials on finite fields library
+
+#![warn(missing_docs)]
+
 extern crate pcurve_field as field;
 
 use std::ops::{Mul, Add};
 use field::FieldElement;
 
+/// Reprents polynomial on the finite field F with coefficient type T
 #[derive(Clone, PartialEq, Debug)]
 pub struct Polynomial<F: field::Field<Value=T>, T: field::Scalar> {
     coefs: Vec<T>,
@@ -10,6 +15,7 @@ pub struct Polynomial<F: field::Field<Value=T>, T: field::Scalar> {
 }
 
 impl<F: field::Field<Value=T>, T: field::Scalar> Polynomial<F, T> {
+    /// New polynomial with the set of coefficients
     pub fn new(coefs: Vec<T>) -> Self {
         Polynomial {
             coefs: coefs,
@@ -17,6 +23,7 @@ impl<F: field::Field<Value=T>, T: field::Scalar> Polynomial<F, T> {
         }
     }
 
+    /// Evaluate polynomial on t
     pub fn eval(self, t: T) -> FieldElement<F, T>
         where T: Mul<Output=T>,
             FieldElement<F,T>: Mul<Output=FieldElement<F,T>>
