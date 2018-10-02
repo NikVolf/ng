@@ -59,6 +59,27 @@ impl<F: field::Field<Value=T>, T: field::Scalar> Mul for Polynomial<F, T>
     }
 }
 
+impl<F: field::Field<Value=T>, T: field::Scalar> Add for Polynomial<F, T>
+    where T: Add<Output=T>
+{
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        let order = self.coefs.len().max(other.coefs.len());
+
+        let mut result = Vec::with_capacity(order);
+        result.resize(order, T::zero());
+
+        for i in 0..order {
+            result[i] =
+                self.coefs.get(i).unwrap_or(&T::zero()).clone() +
+                other.coefs.get(i).unwrap_or(&T::zero()).clone();
+        }
+
+        Self::new(result)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use field;
@@ -77,19 +98,49 @@ mod tests {
 
     #[test]
     fn mul() {
+        // x + 5
         let p1: Polynomial<Mod1125899839733759Field, _> = Polynomial::new(vec![5, 1]);
+
+        // x + 1
         let p2: Polynomial<Mod1125899839733759Field, _> = Polynomial::new(vec![1, 1]);
 
+        // x^2 + 6x + 5
         let pn = p1 * p2;
 
+        // f(x) = x^2 + 6x + 5, f(1) = 12
         assert_eq!(
             pn.clone().eval(1),
             12.into(),
         );
 
+        // f(x) = x^2 + 6x + 5, f(2) = 21
         assert_eq!(
             pn.eval(2),
             21.into(),
+        );
+    }
+
+    #[test]
+    fn add() {
+        // x + 5
+        let p1: Polynomial<Mod1125899839733759Field, _> = Polynomial::new(vec![5, 1]);
+
+        // x + 1
+        let p2: Polynomial<Mod1125899839733759Field, _> = Polynomial::new(vec![1, 1]);
+
+        // 2x + 6
+        let pn = p1 + p2;
+
+        // f(x) = 2x + 6, f(1) = 8
+        assert_eq!(
+            pn.clone().eval(1),
+            8.into(),
+        );
+
+        // f(x) = 2x + 6, f(101) = 208
+        assert_eq!(
+            pn.clone().eval(101),
+            208.into(),
         );
     }
 }
