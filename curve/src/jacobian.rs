@@ -1,3 +1,5 @@
+use std::ops::{Mul, Add};
+
 use field::{FieldValue, Scalar};
 use {Curve, AffinePoint};
 
@@ -54,7 +56,7 @@ impl<C: Curve> Point<C> {
     }
 }
 
-impl<I: Scalar, C: Curve> ::std::ops::Mul<I> for Point<C>
+impl<I: Scalar, C: Curve> Mul<I> for Point<C>
 {
     type Output = Self;
 
@@ -70,9 +72,9 @@ impl<I: Scalar, C: Curve> ::std::ops::Mul<I> for Point<C>
     }
 }
 
-impl<I: Into<Point<C>>, C: Curve> ::std::ops::Add<I> for Point<C>
+impl<I: Into<Point<C>>, C: Curve> Add<I> for Point<C>
     // this is unneeded compiler hint
-    where C::Value: ::std::ops::Mul<Output=C::Value> + ::std::ops::Mul<u32, Output=C::Value>
+    where C::Value: Mul<Output=C::Value> + Mul<u32, Output=C::Value>
 {
     type Output = Self;
     fn add(self, other: I) -> Self {

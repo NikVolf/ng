@@ -1,3 +1,4 @@
+use std::ops::{Mul, Add};
 
 use field::{FieldValue, Scalar};
 use {Curve, JacobianPoint};
@@ -57,7 +58,7 @@ impl<I, C: Curve> From<(I, I)> for Point<C>
 
 impl<C: Curve> From<JacobianPoint<C>> for Point<C>
     // this is unneeded compiler hint
-    where C::Value: ::std::ops::Mul<Output=C::Value> + ::std::ops::Mul<u32, Output=C::Value>
+    where C::Value: Mul<Output=C::Value> + Mul<u32, Output=C::Value>
 {
     fn from(p: JacobianPoint<C>) -> Self {
         let (x, y, z) = p.into_parts();
@@ -73,11 +74,9 @@ impl<C: Curve> From<JacobianPoint<C>> for Point<C>
     }
 }
 
-impl<C: Curve> ::std::ops::Add for Point<C>
+impl<C: Curve> Add for Point<C>
     // this is unneeded compiler hint
-    where C::Value:
-        ::std::ops::Mul<Output=C::Value>
-        + ::std::ops::Mul<u32, Output=C::Value>
+    where C::Value: Mul<Output=C::Value> + Mul<u32, Output=C::Value>
 {
     type Output = Self;
     fn add(self, other: Self) -> Self::Output {
@@ -114,7 +113,7 @@ impl<C: Curve> ::std::ops::Add for Point<C>
     }
 }
 
-impl<I: Scalar, C: Curve> ::std::ops::Mul<I> for Point<C>
+impl<I: Scalar, C: Curve> Mul<I> for Point<C>
 {
     type Output = Self;
 
