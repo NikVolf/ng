@@ -1,6 +1,6 @@
-extern crate pcurve_field as field;
-extern crate pcurve_uint as uint;
-extern crate curve;
+extern crate ng_field as field;
+extern crate ng_uint as uint;
+extern crate ng_curve as curve;
 extern crate bigint;
 
 use uint::U256;

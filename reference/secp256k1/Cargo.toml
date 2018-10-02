@@ -1,10 +1,10 @@
 [package]
-name = "pcurve-seck256p1"
+name = "ng-seck256p1"
 version = "0.1.0"
 authors = ["NikVolf <nikvolf@gmail.com>"]
 
 [dependencies]
-pcurve-uint = { path = "../../uint-field" }
-pcurve-field = { path = "../../field" }
-curve = { path = "../../curve" }
+ng-uint = { path = "../../uint-field" }
+ng-field = { path = "../../field" }
+ng-curve = { path = "../../curve" }
 bigint = "4"

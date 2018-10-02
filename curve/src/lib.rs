@@ -2,7 +2,7 @@
 
 #![warn(missing_docs)]
 
-extern crate pcurve_field as field;
+extern crate ng_field as field;
 
 mod affine;
 mod jacobian;

@@ -1,5 +1,5 @@
 extern crate bigint;
-extern crate pcurve_field as field;
+extern crate ng_field as field;
 #[cfg(test)] #[macro_use] extern crate quickcheck;
 
 use field::{MulReduce, ModMul, ModAdd, ModNeg, ModInv, Scalar};

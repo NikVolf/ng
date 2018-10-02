@@ -1,11 +1,11 @@
 [package]
-name = "pcurve-uint"
+name = "ng-uint"
 version = "0.1.0"
 authors = ["NikVolf <nikvolf@gmail.com>"]
 
 [dependencies]
 bigint = { version = "4", features = ["std"] }
-pcurve-field = { path = "../field" }
+ng-field = { path = "../field" }
 
 [dev-dependencies]
 quickcheck = "0.7"

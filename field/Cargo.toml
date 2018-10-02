@@ -1,5 +1,5 @@
 [package]
-name = "pcurve-field"
+name = "ng-field"
 version = "0.1.0"
 authors = ["NikVolf <nikvolf@gmail.com>"]
 

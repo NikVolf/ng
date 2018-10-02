@@ -2,7 +2,7 @@
 
 #![warn(missing_docs)]
 
-extern crate pcurve_field as field;
+extern crate ng_field as field;
 
 use std::ops::{Mul, Add};
 use field::FieldElement;
