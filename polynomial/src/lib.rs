@@ -23,6 +23,43 @@ impl<F: field::Field<Value=T>, T: field::Scalar> Polynomial<F, T> {
         }
     }
 
+    /// "One" polynomial (multiplicative identity for the ring)
+    pub fn one() -> Self {
+        Self::new(vec![T::one()])
+    }
+
+    /// Zero polynomial (additive identity for the ring)
+    pub fn zero() -> Self {
+        Self::new(Vec::new())
+    }
+
+    /// Lagrange interpolation
+    pub fn interpolate(points: Vec<(T, T)>) -> Self
+        where Self: Mul<Output=Self> + Add<Output=Self> + Mul<T, Output=Self>,
+            T: Mul<Output=T>
+    {
+
+        let mut additive_members = Vec::new();
+
+        for i in 0..points.len() {
+            let mut poly = Self::one();
+            for j in 0..points.len() {
+                if i == j { continue; }
+
+                // (x - x[i]) member
+                poly = poly * Self::new(vec![points[j].0.neg(F::MODULUS), T::one()])
+            }
+
+            let val = poly.clone().eval(points[i].0).into_value();
+
+            poly = poly * val.inv(F::MODULUS);
+
+            additive_members.push(poly);
+        }
+
+        additive_members.into_iter().fold(Self::zero(), |acc, p| acc + p)
+    }
+
     /// Evaluate polynomial on t
     pub fn eval(self, t: T) -> FieldElement<F, T>
         where T: Mul<Output=T>,
@@ -39,6 +76,8 @@ impl<F: field::Field<Value=T>, T: field::Scalar> Polynomial<F, T> {
 
         result
     }
+
+
 }
 
 impl<F: field::Field<Value=T>, T: field::Scalar> Mul for Polynomial<F, T>
@@ -63,6 +102,20 @@ impl<F: field::Field<Value=T>, T: field::Scalar> Mul for Polynomial<F, T>
         }
 
         Self::new(result)
+    }
+}
+
+impl<F: field::Field<Value=T>, T: field::Scalar> Mul<T> for Polynomial<F, T>
+    where T: Mul<Output=T>, T: Add<Output=T>
+{
+    type Output = Self;
+
+    fn mul(self, other: T) -> Self {
+        let mut coefs = self.coefs;
+
+        for coef in coefs.iter_mut() { *coef = *coef * other }
+
+        Self::new(coefs)
     }
 }
 
@@ -149,5 +202,12 @@ mod tests {
             pn.clone().eval(101),
             208.into(),
         );
+    }
+
+    #[test]
+    fn interpolation() {
+        let p: Polynomial<Mod1125899839733759Field, _> = Polynomial::interpolate(vec![(5, 1)]);
+
+        assert_eq!(p.eval(5), 1.into());
     }
 }
