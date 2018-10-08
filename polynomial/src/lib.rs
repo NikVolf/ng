@@ -52,7 +52,7 @@ impl<F: field::Field<Value=T>, T: field::Scalar> Polynomial<F, T> {
 
             let val = poly.clone().eval(points[i].0).into_value();
 
-            poly = poly * val.inv(F::MODULUS);
+            poly = poly * val.inv(F::MODULUS) * points[i].1;
 
             additive_members.push(poly);
         }
@@ -113,7 +113,7 @@ impl<F: field::Field<Value=T>, T: field::Scalar> Mul<T> for Polynomial<F, T>
     fn mul(self, other: T) -> Self {
         let mut coefs = self.coefs;
 
-        for coef in coefs.iter_mut() { *coef = *coef * other }
+        for coef in coefs.iter_mut() { *coef = ::field::ModMul::mul(*coef, other, F::MODULUS) }
 
         Self::new(coefs)
     }
@@ -206,8 +206,13 @@ mod tests {
 
     #[test]
     fn interpolation() {
-        let p: Polynomial<Mod1125899839733759Field, _> = Polynomial::interpolate(vec![(5, 1)]);
+        let p: Polynomial<Mod1125899839733759Field, _> = Polynomial::interpolate(vec![(5, 2)]);
+        assert_eq!(p.eval(5), 2.into());
 
-        assert_eq!(p.eval(5), 1.into());
+        let p: Polynomial<Mod1125899839733759Field, _> = Polynomial::interpolate(vec![
+            (13, 5), (7, 2)
+        ]);
+        assert_eq!(p.clone().eval(13), 5.into());
+        assert_eq!(p.eval(7), 2.into());
     }
 }
