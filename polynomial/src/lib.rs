@@ -6,7 +6,7 @@ extern crate ng_field as field;
 
 use std::ops::{Mul, Add};
 
-/// Reprents polynomial on the finite field of members type T
+/// Represents polynomial on the finite field of members type T
 #[derive(Clone, PartialEq, Debug)]
 pub struct Polynomial<T: field::FieldValue> {
     coefs: Vec<T>,
