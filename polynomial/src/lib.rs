@@ -33,7 +33,6 @@ impl<T: field::FieldValue> Polynomial<T> {
     /// Lagrange interpolation
     pub fn interpolate<I: Into<T>+Copy>(points: Vec<(I, I)>) -> Self
     {
-
         let mut additive_members = Vec::new();
 
         for i in 0..points.len() {
@@ -45,7 +44,7 @@ impl<T: field::FieldValue> Polynomial<T> {
                 poly = poly * Self::new(vec![-points[j].0.into(), T::one()])
             }
 
-            let val = poly.clone().eval(points[i].0.into());
+            let val = poly.eval(points[i].0.into());
 
             poly = poly * (T::one() / val) * points[i].1.into();
 
@@ -56,13 +55,13 @@ impl<T: field::FieldValue> Polynomial<T> {
     }
 
     /// Evaluate polynomial on t
-    pub fn eval<I: Into<T>+Copy>(self, t: I) -> T
+    pub fn eval<I: Into<T>+Copy>(&self, t: I) -> T
     {
         let mut result = T::zero();
         let mut power = T::one();
 
-        for c in self.coefs.into_iter() {
-            result = result + c * power;
+        for c in self.coefs.iter() {
+            result = result + *c * power;
             power = power * t.into();
         }
 
@@ -158,7 +157,7 @@ mod tests {
 
         // f(x) = x^2 + 6x + 5, f(1) = 12
         assert_eq!(
-            pn.clone().eval(1),
+            pn.eval(1),
             12.into(),
         );
 
@@ -182,13 +181,13 @@ mod tests {
 
         // f(x) = 2x + 6, f(1) = 8
         assert_eq!(
-            pn.clone().eval(1),
+            pn.eval(1),
             8.into(),
         );
 
         // f(x) = 2x + 6, f(101) = 208
         assert_eq!(
-            pn.clone().eval(101),
+            pn.eval(101),
             208.into(),
         );
     }
@@ -201,7 +200,7 @@ mod tests {
         let p: TestPolynomial = Polynomial::interpolate(vec![
             (13, 5), (7, 2)
         ]);
-        assert_eq!(p.clone().eval(13), 5.into());
+        assert_eq!(p.eval(13), 5.into());
         assert_eq!(p.eval(7), 2.into());
     }
 }
