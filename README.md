@@ -4,6 +4,8 @@ Various finite field primitives.
 
 Everything is slow, non-constant and for reference implmenentations only!
 
+[![Build Status](https://travis-ci.org/NikVolf/ng.svg?branch=master)](https://travis-ci.org/NikVolf/ng)
+
 [Documentation](https://nikvolf.github.io/ng/)
 
 # License
