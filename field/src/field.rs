@@ -1,6 +1,6 @@
 //! Abstract field
 
-use std::ops::{Add, Mul, Sub, Div};
+use std::ops::{Add, Mul, Sub, Div, Neg};
 use arith::Value;
 
 /// Abstract field description
@@ -26,7 +26,8 @@ pub trait FieldValue:
     Mul<u32, Output=Self> +
     Add<Output=Self> +
     Div<Output=Self> +
-    Sub<Output=Self>
+    Sub<Output=Self> +
+    Neg<Output=Self>
 {
     /// Inner scalar value type of field element
     type Value: Value;

@@ -5,21 +5,18 @@
 extern crate ng_field as field;
 
 use std::ops::{Mul, Add};
-use field::FieldElement;
 
 /// Reprents polynomial on the finite field F with coefficient type T
 #[derive(Clone, PartialEq, Debug)]
-pub struct Polynomial<F: field::Field<Value=T>, T: field::Scalar> {
+pub struct Polynomial<T: field::FieldValue> {
     coefs: Vec<T>,
-    _field: ::std::marker::PhantomData<F>,
 }
 
-impl<F: field::Field<Value=T>, T: field::Scalar> Polynomial<F, T> {
+impl<T: field::FieldValue> Polynomial<T> {
     /// New polynomial with the set of coefficients
-    pub fn new(coefs: Vec<T>) -> Self {
+    pub fn new<I: Into<T>>(coefs: Vec<I>) -> Self {
         Polynomial {
-            coefs: coefs,
-            _field: ::std::marker::PhantomData,
+            coefs: coefs.into_iter().map(Into::into).collect(),
         }
     }
 
@@ -30,13 +27,11 @@ impl<F: field::Field<Value=T>, T: field::Scalar> Polynomial<F, T> {
 
     /// Zero polynomial (additive identity for the ring)
     pub fn zero() -> Self {
-        Self::new(Vec::new())
+        Self::new(Vec::<T>::new())
     }
 
     /// Lagrange interpolation
-    pub fn interpolate(points: Vec<(T, T)>) -> Self
-        where Self: Mul<Output=Self> + Add<Output=Self> + Mul<T, Output=Self>,
-            T: Mul<Output=T>
+    pub fn interpolate<I: Into<T>+Copy>(points: Vec<(I, I)>) -> Self
     {
 
         let mut additive_members = Vec::new();
@@ -47,12 +42,12 @@ impl<F: field::Field<Value=T>, T: field::Scalar> Polynomial<F, T> {
                 if i == j { continue; }
 
                 // (x - x[i]) member
-                poly = poly * Self::new(vec![points[j].0.neg(F::MODULUS), T::one()])
+                poly = poly * Self::new(vec![-points[j].0.into(), T::one()])
             }
 
-            let val = poly.clone().eval(points[i].0).into_value();
+            let val = poly.clone().eval(points[i].0.into());
 
-            poly = poly * val.inv(F::MODULUS) * points[i].1;
+            poly = poly * (T::one() / val) * points[i].1.into();
 
             additive_members.push(poly);
         }
@@ -61,27 +56,21 @@ impl<F: field::Field<Value=T>, T: field::Scalar> Polynomial<F, T> {
     }
 
     /// Evaluate polynomial on t
-    pub fn eval(self, t: T) -> FieldElement<F, T>
-        where T: Mul<Output=T>,
-            FieldElement<F,T>: Mul<Output=FieldElement<F,T>>
+    pub fn eval<I: Into<T>+Copy>(self, t: I) -> T
     {
-        let mut result: FieldElement<F, T> = T::zero().into();
-        let mut power: FieldElement<F, T> = T::one().into();
+        let mut result = T::zero();
+        let mut power = T::one();
 
         for c in self.coefs.into_iter() {
-            let c_val: FieldElement<F, T> = c.into();
-            result = result + c_val * power;
+            result = result + c * power;
             power = power * t.into();
         }
 
         result
     }
-
-
 }
 
-impl<F: field::Field<Value=T>, T: field::Scalar> Mul for Polynomial<F, T>
-    where T: Mul<Output=T>, T: Add<Output=T>
+impl<T: field::FieldValue> Mul for Polynomial<T>
 {
     type Output = Self;
 
@@ -105,22 +94,20 @@ impl<F: field::Field<Value=T>, T: field::Scalar> Mul for Polynomial<F, T>
     }
 }
 
-impl<F: field::Field<Value=T>, T: field::Scalar> Mul<T> for Polynomial<F, T>
-    where T: Mul<Output=T>, T: Add<Output=T>
+impl<T: field::FieldValue> Mul<T> for Polynomial<T>
 {
     type Output = Self;
 
     fn mul(self, other: T) -> Self {
         let mut coefs = self.coefs;
 
-        for coef in coefs.iter_mut() { *coef = ::field::ModMul::mul(*coef, other, F::MODULUS) }
+        for coef in coefs.iter_mut() { *coef = *coef * other }
 
         Self::new(coefs)
     }
 }
 
-impl<F: field::Field<Value=T>, T: field::Scalar> Add for Polynomial<F, T>
-    where T: Add<Output=T>
+impl<T: field::FieldValue> Add for Polynomial<T>
 {
     type Output = Self;
 
@@ -156,13 +143,15 @@ mod tests {
         const R_INVERSE: u64 = 343597359104;
     }
 
+    type TestPolynomial = Polynomial<field::FieldElement<Mod1125899839733759Field, u64>>;
+
     #[test]
     fn mul() {
         // x + 5
-        let p1: Polynomial<Mod1125899839733759Field, _> = Polynomial::new(vec![5, 1]);
+        let p1: TestPolynomial = Polynomial::new(vec![5, 1]);
 
         // x + 1
-        let p2: Polynomial<Mod1125899839733759Field, _> = Polynomial::new(vec![1, 1]);
+        let p2: TestPolynomial = Polynomial::new(vec![1, 1]);
 
         // x^2 + 6x + 5
         let pn = p1 * p2;
@@ -183,10 +172,10 @@ mod tests {
     #[test]
     fn add() {
         // x + 5
-        let p1: Polynomial<Mod1125899839733759Field, _> = Polynomial::new(vec![5, 1]);
+        let p1: TestPolynomial = Polynomial::new(vec![5, 1]);
 
         // x + 1
-        let p2: Polynomial<Mod1125899839733759Field, _> = Polynomial::new(vec![1, 1]);
+        let p2: TestPolynomial = Polynomial::new(vec![1, 1]);
 
         // 2x + 6
         let pn = p1 + p2;
@@ -206,10 +195,10 @@ mod tests {
 
     #[test]
     fn interpolation() {
-        let p: Polynomial<Mod1125899839733759Field, _> = Polynomial::interpolate(vec![(5, 2)]);
+        let p: TestPolynomial = Polynomial::interpolate(vec![(5, 2)]);
         assert_eq!(p.eval(5), 2.into());
 
-        let p: Polynomial<Mod1125899839733759Field, _> = Polynomial::interpolate(vec![
+        let p: TestPolynomial = Polynomial::interpolate(vec![
             (13, 5), (7, 2)
         ]);
         assert_eq!(p.clone().eval(13), 5.into());
