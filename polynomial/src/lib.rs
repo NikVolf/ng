@@ -6,7 +6,7 @@ extern crate ng_field as field;
 
 use std::ops::{Mul, Add};
 
-/// Reprents polynomial on the finite field F with coefficient type T
+/// Reprents polynomial on the finite field of members type T
 #[derive(Clone, PartialEq, Debug)]
 pub struct Polynomial<T: field::FieldValue> {
     coefs: Vec<T>,
@@ -14,7 +14,7 @@ pub struct Polynomial<T: field::FieldValue> {
 
 impl<T: field::FieldValue> Polynomial<T> {
     /// New polynomial with the set of coefficients
-    pub fn new<I: Into<T>>(coefs: Vec<I>) -> Self {
+    pub fn new<I: IntoIterator<Item=TT>, TT: Into<T>>(coefs: I) -> Self {
         Polynomial {
             coefs: coefs.into_iter().map(Into::into).collect(),
         }
@@ -31,7 +31,7 @@ impl<T: field::FieldValue> Polynomial<T> {
     }
 
     /// Lagrange interpolation
-    pub fn interpolate<I: Into<T>+Copy>(points: Vec<(I, I)>) -> Self
+    pub fn interpolate<I: Into<T>+Copy>(points: &[(I, I)]) -> Self
     {
         let mut additive_members = Vec::new();
 
@@ -194,10 +194,10 @@ mod tests {
 
     #[test]
     fn interpolation() {
-        let p: TestPolynomial = Polynomial::interpolate(vec![(5, 2)]);
+        let p: TestPolynomial = Polynomial::interpolate(&[(5, 2)]);
         assert_eq!(p.eval(5), 2.into());
 
-        let p: TestPolynomial = Polynomial::interpolate(vec![
+        let p: TestPolynomial = Polynomial::interpolate(&[
             (13, 5), (7, 2)
         ]);
         assert_eq!(p.eval(13), 5.into());
