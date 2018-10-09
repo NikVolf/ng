@@ -1,5 +1,5 @@
 [package]
-name = "ng-seck256p1"
+name = "ng-secp256k1"
 version = "0.1.0"
 authors = ["NikVolf <nikvolf@gmail.com>"]
 
