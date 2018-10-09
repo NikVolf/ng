@@ -2,8 +2,8 @@ dist: trusty
 sudo: required
 language: rust
 rust:
-  - nightly
-  - stable
+- nightly
+- stable
 script:
 - cargo test --release --all
 after_success: |-
@@ -14,7 +14,6 @@ after_success: |-
   sudo pip install ghp-import && \
   ghp-import -n target/doc && \
   git push -qf https://${TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
-
 env:
   global:
-    - secure: o0FH3sDSvQPBgGku0QU86HrSCH7YUN+l6WD4jk2OKkb/OVaYHR/9zna9/v7V5cQarg7uo4s7T8xSd6HJD3B+yxl2t73uPD+sqgf3hWx1PSI9ARtg3YWhq/l+Bl79Mm3Bz9hW68wPHXrKa95bDu2oYX6o15jWIYEMT4BUrGJWqhAoADnVdDttBaqKEkCBl1dFpRBagFV0/0eLXya8b+/6T7Q7Y8ZtINOD54fw5iDqAIlcKEyTWNF96/ZMOTfachs58hEn/EAFKLRWnarrGl9+jK/g7fU5+2QivJw8qVidqJvTA9A6FhRzELcwbS+okx63ViZe/JRO/GeGo3QR/Q71ukneu62EQf608B12h/3SLMomTlhv0swIvcehcUDXxCkujFN1dm3b68Tun9kbfnDyoTSy5dOLd92zkjgXo2M8PGfwLLceZVUovnrE9e9Je/lji9O+9bpFbxBkvrXnK8jAAmNVdfmefY/qeDW2HDFcP9aqquXXQ20JQw1fnd/R5y9MC+IKcKxaRtKoioDpQXtxj6JA7YyBzrMnVcmtOxUzvplNYPif9BBFtuBNKUIW5h3lcoyDWesRgzt5MXsm8q+femBDhkxbb24RU8hd8j5heUNtblqgADQpssH0eNHqYgSHgwYRhuRgjByTMt6rf0Da/uANoGnBZQWbwLsW9h/GGN0=
+  - secure: oI+P5jFEUQM9ZYEW6Sow1/ZfcLBt+qOf6GFx0fmugSz5+dcGejn/4KjAA//CEmpvQL9HLFhCr4uCVo6fyP1ROWKoOizv2sjl43MZhUDHBYYqSsqcrW1E9YnKhOFqqM5jnYElhGIZz3QaI33hCx1e2+q0qMl+T+QWVOQU/MotxKn6LW6+D6o8Kw3a2uD3+X6+rdna3zsol1Ly/45gMGojlryP5TyaQ/VLyi1ic5qvIdpozTY2ujXueL+QFaORs4P6hlqeZx3XtZwTlPAsmYlfzeaeJSGBViwuqUkTQeB5x6Pthq6iIlUUoG+DN7m5ESVo0nhQOuZHb7ogoSLw3A1C1xI7fPhNajxsrVJfktpWNSWp/Uz3qFvGSRh71weeHMPv2/ZttzXZIxqPDD1kg6LkGZ1l8hmBVq3RIXcMkqa90QSu4KycryDBFueTQlCaZio9XvBX/f/+3G1sCrRZAzIzoEa+RGB3QQYTy2LZ2NFczYf6sOpCvvCC+FAMDvHx3LS6jKV5Zi1dscx91tlR63/EWJio+D92DBXanwO8eh8mWglz46Jown8R4AEIznHXUNyfZRrtk8gmY50c9eKqvnF4cmfGFOIM7SYYZ8s1MAH8auvi/nLgwiFWqePIkF2ntfSg0qn6in8KUKHWRwNodhCkrFcKjJmcbg0wypthh78wKp8=
