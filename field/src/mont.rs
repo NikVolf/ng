@@ -1,38 +1,35 @@
 //! Abstract montgomery field element
 
 use std::ops::{Add, Mul, Neg, Sub, Div};
-use std::marker::PhantomData;
 
-use {field, arith, element};
+use arith::{self, Value, ModAdd, ModMul, ModNeg, ModInv, MulReduce};
+use {field, element};
 
 /// Field element on the field F with value V in montgomery representation
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct MontgomeryElement<F: field::Field<Value=V>, V: arith::Value> {
-    value: V,
-    field: PhantomData<F>,
+pub struct MontgomeryElement<F: field::Field> {
+    value: F::Value,
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> field::FieldValue for MontgomeryElement<F, V> {
-    type Value = V;
+impl<F: field::Field> field::FieldValue for MontgomeryElement<F> {
+    type Value = F::Value;
 
     /// Multiplication identity
     fn one() -> Self {
         MontgomeryElement {
             value: F::R,
-            field: PhantomData,
         }
     }
 
     /// Additive identity
     fn zero() -> Self {
         MontgomeryElement {
-            value: V::zero(),
-            field: PhantomData,
+            value: F::Value::zero(),
         }
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> MontgomeryElement<F, V> {
+impl<F: field::Field> MontgomeryElement<F> {
     /// New field element from regular form
     pub fn from_element(t: element::FieldElement<F>) -> Self {
         t.into_value().into()
@@ -44,72 +41,70 @@ impl<F: field::Field<Value=V>, V: arith::Value> MontgomeryElement<F, V> {
     }
 
     /// Deconstruct and return raw value (not reduced)
-    pub fn into_value(self) -> V {
+    pub fn into_value(self) -> F::Value {
         self.value
     }
 
     /// Deconstruct and return raw value (not reduced)
-    pub fn into_reduced_value(self) -> V {
-        self.value.mul(F::R_INVERSE, F::MODULUS)
+    pub fn into_reduced_value(self) -> F::Value {
+        ModMul::<F::Value>::mul(self.value, F::R_INVERSE, F::MODULUS)
     }
 
     /// Construct from raw value (should be reduced in advance)
-    pub(crate) fn from_raw(val: V) -> Self {
+    pub(crate) fn from_raw(val: F::Value) -> Self {
         MontgomeryElement {
             value: val,
-            field: PhantomData,
         }
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> Add for MontgomeryElement<F, V> {
+impl<F: field::Field> Add for MontgomeryElement<F> {
     type Output = Self;
     fn add(self, other: Self) -> Self::Output {
         MontgomeryElement::from_raw(self.value.add(other.value, F::MODULUS))
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> Sub for MontgomeryElement<F, V> {
+impl<F: field::Field> Sub for MontgomeryElement<F> {
     type Output = Self;
     fn sub(self, other: Self) -> Self::Output {
         MontgomeryElement::from_raw(self.value.add(other.value.neg(F::MODULUS), F::MODULUS))
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> Neg for MontgomeryElement<F, V> {
+impl<F: field::Field> Neg for MontgomeryElement<F> {
     type Output = Self;
     fn neg(self) -> Self::Output {
         MontgomeryElement::from_raw(self.value.neg(F::MODULUS))
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> Mul for MontgomeryElement<F, V> {
+impl<F: field::Field> Mul for MontgomeryElement<F> {
     type Output = Self;
     fn mul(self, other: Self) -> Self::Output {
         MontgomeryElement::from_raw(self.value.mul_reduce(other.value, F::MODULUS, F::R_INVERSE))
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> Mul<u32> for MontgomeryElement<F, V> {
+impl<F: field::Field> Mul<u32> for MontgomeryElement<F> {
     type Output = Self;
     fn mul(self, other: u32) -> Self {
         MontgomeryElement::from_raw(self.value.mul(other, F::MODULUS))
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> Div for MontgomeryElement<F, V> {
+impl<F: field::Field> Div for MontgomeryElement<F> {
     type Output = Self;
     fn div(self, other: Self) -> Self::Output {
         MontgomeryElement::from_raw(self.value.mul_reduce(other.value.inv(F::MODULUS), F::MODULUS, F::R))
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> From<V> for MontgomeryElement<F, V>
+impl<F: field::Field<Value=V>, V: arith::Value> From<V> for MontgomeryElement<F>
 {
     fn from(val: V) -> Self {
         MontgomeryElement {
             value: val.mul(F::R, F::MODULUS),
-            field: PhantomData,
         }
     }
 }
@@ -125,10 +120,10 @@ mod tests {
 
     #[test]
     fn smoky() {
-        let elem1: MontgomeryElement<Mod19Field, _> = 6.into();
+        let elem1: MontgomeryElement<Mod19Field> = 6.into();
         assert_eq!(elem1.into_value(), 1);
 
-        let elem2: MontgomeryElement<Mod19Field, _> = 16.into();
+        let elem2: MontgomeryElement<Mod19Field> = 16.into();
         assert_eq!(elem2.into_value(), 9);
 
         assert_eq!(elem1 + elem2, 3.into());
@@ -152,12 +147,12 @@ mod tests {
 
      #[test]
      fn mul_scalar() {
-         let elem1: MontgomeryElement<Mod19Field, _> = 6.into();
+         let elem1: MontgomeryElement<Mod19Field> = 6.into();
          assert_eq!(elem1.clone().into_value(), 1);
          assert_eq!((elem1 * 2).into_value(), 2);
      }
 
-    fn field1_elem<T: Into<MontgomeryElement<Mod1125899839733759Field, u64>>>(v: T) -> MontgomeryElement<Mod1125899839733759Field, u64>
+    fn field1_elem<T: Into<MontgomeryElement<Mod1125899839733759Field>>>(v: T) -> MontgomeryElement<Mod1125899839733759Field>
     {
         v.into()
     }
