@@ -34,12 +34,12 @@ impl<F: field::Field<Value=V>, V: arith::Value> field::FieldValue for Montgomery
 
 impl<F: field::Field<Value=V>, V: arith::Value> MontgomeryElement<F, V> {
     /// New field element from regular form
-    pub fn from_element(t: element::FieldElement<F, V>) -> Self {
+    pub fn from_element(t: element::FieldElement<F>) -> Self {
         t.into_value().into()
     }
 
     /// Convert to regular form
-    pub fn into_element(self) -> element::FieldElement<F, V> {
+    pub fn into_element(self) -> element::FieldElement<F> {
         self.into_reduced_value().into()
     }
 

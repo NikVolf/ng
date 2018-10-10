@@ -6,7 +6,7 @@ use arith::Value;
 /// Abstract field description
 pub trait Field: Copy + Clone + PartialEq + ::std::fmt::Debug {
     /// Type of scalar
-    type Value;
+    type Value: Value;
     /// Field modulus
     const MODULUS: Self::Value;
     /// Field montgomery coefficient (R)

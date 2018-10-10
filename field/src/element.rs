@@ -4,90 +4,88 @@ use std::ops::{Add, Mul, Neg, Sub, Div};
 use std::marker::PhantomData;
 
 use {field, arith};
+use arith::{Value, ModAdd};
 
 /// Field element on the field F with value V
 #[repr(C)]
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct FieldElement<F: field::Field<Value=V>, V: arith::Value> {
-    value: V,
-    field: PhantomData<F>,
+pub struct FieldElement<F: field::Field>
+{
+    value: F::Value,
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> FieldElement<F, V> {
+impl<F: field::Field> FieldElement<F> {
     /// Deconstruct and return raw value
-    pub fn into_value(self) -> V {
+    pub fn into_value(self) -> F::Value {
         self.value
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> Add for FieldElement<F, V> {
-    type Output = FieldElement<F, V>;
-    fn add(self, other: FieldElement<F, V>) -> Self::Output {
+impl<F: field::Field> Add for FieldElement<F> {
+    type Output = Self;
+    fn add(self, other: Self) -> Self::Output {
         self.value.add(other.value, F::MODULUS).into()
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> Sub for FieldElement<F, V> {
-    type Output = FieldElement<F, V>;
-    fn sub(self, other: FieldElement<F, V>) -> Self::Output {
+impl<F: field::Field> Sub for FieldElement<F> {
+    type Output = Self;
+    fn sub(self, other: Self) -> Self::Output {
         self.value.add(other.value.neg(F::MODULUS), F::MODULUS).into()
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> Neg for FieldElement<F, V> {
-    type Output = FieldElement<F, V>;
+impl<F: field::Field> Neg for FieldElement<F> {
+    type Output = Self;
     fn neg(self) -> Self::Output {
         self.value.neg(F::MODULUS).into()
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> Mul for FieldElement<F, V> {
-    type Output = FieldElement<F, V>;
+impl<F: field::Field> Mul for FieldElement<F> {
+    type Output = Self;
     fn mul(self, other: Self) -> Self::Output {
         self.value.mul(other.value, F::MODULUS).into()
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> Mul<u32> for FieldElement<F, V> {
+impl<F: field::Field> Mul<u32> for FieldElement<F> {
     type Output = Self;
     fn mul(self, other: u32) -> Self {
         self.value.mul(other, F::MODULUS).into()
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> Div for FieldElement<F, V> {
-    type Output = FieldElement<F, V>;
+impl<F: field::Field> Div for FieldElement<F> {
+    type Output = Self;
     fn div(self, other: Self) -> Self::Output {
         self.value.mul(other.value.inv(F::MODULUS), F::MODULUS).into()
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> From<V> for FieldElement<F, V>
-{
-    fn from(val: V) -> Self {
-        FieldElement {
-            value: val % F::MODULUS,
-            field: PhantomData,
-        }
-    }
-}
+// impl<F: field::Field> From<F::Value> for FieldElement<F>
+// {
+//     fn from(val: F::Value) -> Self {
+//         FieldElement {
+//             value: val % F::MODULUS,
+//         }
+//     }
+// }
 
-impl<F: field::Field<Value=V>, V: arith::Value> field::FieldValue for FieldElement<F, V> {
-    type Value = V;
+impl<F: field::Field> field::FieldValue for FieldElement<F> {
+    type Value = F::Value;
 
     /// Multiplication identity
     fn one() -> Self {
         FieldElement {
-            value: V::one(),
-            field: PhantomData,
+            value: F::Value::one(),
         }
     }
 
     /// Additive identity
     fn zero() -> Self {
         FieldElement {
-            value: V::zero(),
-            field: PhantomData,
+            value: F::Value::zero(),
         }
     }
 }
