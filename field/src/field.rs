@@ -2,17 +2,30 @@
 
 use std::ops::{Add, Mul, Sub, Div, Neg};
 use arith::Value;
+use element::FieldElement;
 
 /// Abstract field description
 pub trait Field: Copy + Clone + PartialEq + ::std::fmt::Debug {
     /// Type of scalar
-    type Value;
+    type Value: Value;
     /// Field modulus
     const MODULUS: Self::Value;
     /// Field montgomery coefficient (R)
     const R: Self::Value;
     /// Multiplicative inverse of R modulus MODULUS
     const R_INVERSE: Self::Value;
+
+    /// Additive identity in regular form
+    fn zero() -> FieldElement<Self, Self::Value> {
+        FieldElement::zero()
+    }
+
+    /// Multiplicative identity in regular form
+    fn one() -> FieldElement<Self, Self::Value> {
+        FieldElement::one()
+    }
+
+    /// 
 }
 
 /// Generalization of field element
