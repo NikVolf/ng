@@ -1,10 +1,9 @@
 //! Abstract field element implementation
 
 use std::ops::{Add, Mul, Neg, Sub, Div};
-use std::marker::PhantomData;
 
-use {field, arith};
-use arith::{Value, ModAdd};
+use field;
+use arith::{self, Value, ModAdd, ModMul, ModNeg, ModInv};
 
 /// Field element on the field F with value V
 #[repr(C)]
@@ -45,7 +44,7 @@ impl<F: field::Field> Neg for FieldElement<F> {
 impl<F: field::Field> Mul for FieldElement<F> {
     type Output = Self;
     fn mul(self, other: Self) -> Self::Output {
-        self.value.mul(other.value, F::MODULUS).into()
+        ModMul::<F::Value>::mul(self.value, other.value, F::MODULUS).into()
     }
 }
 
@@ -59,18 +58,18 @@ impl<F: field::Field> Mul<u32> for FieldElement<F> {
 impl<F: field::Field> Div for FieldElement<F> {
     type Output = Self;
     fn div(self, other: Self) -> Self::Output {
-        self.value.mul(other.value.inv(F::MODULUS), F::MODULUS).into()
+        ModMul::<F::Value>::mul(self.value, other.value.inv(F::MODULUS), F::MODULUS).into()
     }
 }
 
-// impl<F: field::Field> From<F::Value> for FieldElement<F>
-// {
-//     fn from(val: F::Value) -> Self {
-//         FieldElement {
-//             value: val % F::MODULUS,
-//         }
-//     }
-// }
+impl<F: field::Field<Value=V>, V: arith::Value> From<V> for FieldElement<F>
+{
+    fn from(v: V) -> Self {
+        FieldElement {
+            value: v % F::MODULUS,
+        }
+    }
+}
 
 impl<F: field::Field> field::FieldValue for FieldElement<F> {
     type Value = F::Value;
@@ -100,8 +99,8 @@ mod tests {
 
     #[test]
     fn smoky() {
-        let elem1: FieldElement<Mod19Field, _> = 6.into();
-        let elem2: FieldElement<Mod19Field, _> = 16.into();
+        let elem1: FieldElement<Mod19Field> = 6.into();
+        let elem2: FieldElement<Mod19Field> = 16.into();
 
         assert_eq!(elem1 + elem2, 3.into());
         assert_eq!(elem2 + elem1, 3.into());
@@ -122,7 +121,7 @@ mod tests {
         assert_eq!(elem2.pow(10), 16.into());
      }
 
-    fn field1_elem<T: Into<FieldElement<Mod1125899839733759Field, u64>>>(v: T) -> FieldElement<Mod1125899839733759Field, u64>
+    fn field1_elem<T: Into<FieldElement<Mod1125899839733759Field>>>(v: T) -> FieldElement<Mod1125899839733759Field>
     {
         v.into()
     }
