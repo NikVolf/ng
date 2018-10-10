@@ -3,6 +3,7 @@
 #![warn(missing_docs)]
 
 extern crate ng_field as field;
+#[cfg(test)] #[macro_use] extern crate quickcheck;
 
 use std::ops::{Mul, Add};
 
@@ -131,6 +132,8 @@ mod tests {
     use field;
     use super::*;
 
+    use quickcheck::TestResult;
+
     #[derive(Clone, Copy, PartialEq, Debug)]
     pub struct Mod1125899839733759Field;
 
@@ -202,5 +205,26 @@ mod tests {
         ]);
         assert_eq!(p.eval(13), 5.into());
         assert_eq!(p.eval(7), 2.into());
+    }
+
+    quickcheck! {
+        fn interpolation_of_tuple(x1: u64, y1: u64, x2: u64, y2: u64) -> TestResult {
+            if y1 == y2 {
+                return TestResult::discard();
+            }
+
+            if x1 == x2 && y1 != y2 {
+                return TestResult::discard();
+            }
+
+            let p: TestPolynomial = TestPolynomial::interpolate(&[
+                (x1, y1), (x2, y2)
+            ]);
+
+            TestResult::from_bool(
+                p.eval(x1) == y1.into() &&
+                p.eval(x2) == y2.into()
+            )
+        }
     }
 }
