@@ -17,7 +17,7 @@ pub struct U64Curve;
 
 /// y^2 = x^3 + 7x + 14 over Fp mod 1125899839733759
 impl Curve for U64Curve {
-    type Value = field::FieldElement<U64Field, u64>;
+    type Value = field::FieldElement<U64Field>;
 
     fn generator() -> AffinePoint<Self> {
         (2, 6).into()
@@ -33,7 +33,7 @@ pub struct U64KoblitzCurve;
 
 /// y^2 = x^3 + 41 over Fp mod 1125899839733759
 impl Curve for U64KoblitzCurve {
-    type Value = field::FieldElement<U64Field, u64>;
+    type Value = field::FieldElement<U64Field>;
 
     fn generator() -> AffinePoint<Self> {
         (2, 7).into()
@@ -49,7 +49,7 @@ pub struct U64MontgomeryCurve;
 
 /// y^2 = x^3 + 7x + 14 over Fp mod 1125899839733759
 impl Curve for U64MontgomeryCurve {
-    type Value = field::MontgomeryElement<U64Field, u64>;
+    type Value = field::MontgomeryElement<U64Field>;
 
     fn generator() -> AffinePoint<Self> {
         (2, 6).into()

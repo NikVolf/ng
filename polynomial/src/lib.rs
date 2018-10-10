@@ -145,7 +145,7 @@ mod tests {
         const R_INVERSE: u64 = 343597359104;
     }
 
-    type TestPolynomial = Polynomial<field::FieldElement<Mod1125899839733759Field, u64>>;
+    type TestPolynomial = Polynomial<field::FieldElement<Mod1125899839733759Field>>;
 
     #[test]
     fn mul() {

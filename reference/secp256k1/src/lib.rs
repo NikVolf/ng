@@ -29,11 +29,11 @@ impl field::Field for Secp256k1Field {
 }
 
 impl Secp256k1Field {
-    pub fn from_str(v: &'static str) -> FieldElement<Self, U256> {
+    pub fn from_str(v: &'static str) -> FieldElement<Self> {
         U256::from(v).into()
     }
 
-    pub fn from_u64(x: u64) -> FieldElement<Self, U256> {
+    pub fn from_u64(x: u64) -> FieldElement<Self> {
         U256(x.into()).into()
     }
 }
@@ -42,7 +42,7 @@ impl Secp256k1Field {
 pub struct Secp256k1Curve;
 
 impl Curve for Secp256k1Curve {
-    type Value = FieldElement<Secp256k1Field, U256>;
+    type Value = FieldElement<Secp256k1Field>;
 
     //
     // 55066263022277343669578718895168534326250603453777594175500187360389116729240,

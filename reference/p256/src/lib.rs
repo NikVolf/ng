@@ -45,15 +45,15 @@ impl field::Field for P256Field {
 }
 
 impl P256Field {
-    pub fn from_str(v: &'static str) -> MontgomeryElement<Self, U256> {
+    pub fn from_str(v: &'static str) -> MontgomeryElement<Self> {
         U256::from(v).into()
     }
 
-    pub fn from_hex(v: &'static str) -> MontgomeryElement<Self, U256> {
+    pub fn from_hex(v: &'static str) -> MontgomeryElement<Self> {
         U256::from_hex(v).into()
     }
 
-    pub fn from_u64(x: u64) -> MontgomeryElement<Self, U256> {
+    pub fn from_u64(x: u64) -> MontgomeryElement<Self> {
         U256(x.into()).into()
     }
 }
@@ -62,7 +62,7 @@ impl P256Field {
 pub struct P256Curve;
 
 impl Curve for P256Curve {
-    type Value = MontgomeryElement<P256Field, U256>;
+    type Value = MontgomeryElement<P256Field>;
 
     //
     // 0x6B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C296,

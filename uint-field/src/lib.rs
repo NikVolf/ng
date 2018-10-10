@@ -126,11 +126,11 @@ mod tests {
     }
 
     impl BtcField {
-        fn from_str(v: &'static str) -> FieldElement<Self, U256> {
+        fn from_str(v: &'static str) -> FieldElement<Self> {
             U256::from(v).into()
         }
 
-        fn from_u64(x: u64) -> FieldElement<Self, U256> {
+        fn from_u64(x: u64) -> FieldElement<Self> {
             U256(x.into()).into()
         }
     }
@@ -195,7 +195,7 @@ mod tests {
             if x % BtcField::MODULUS == U256(0.into()) {
                 TestResult::discard()
             } else {
-                let x_e: FieldElement<BtcField, _> = x.into();
+                let x_e: FieldElement<BtcField> = x.into();
 
                 TestResult::from_bool(x_e / x_e == BtcField::from_u64(1))
             }
@@ -207,7 +207,7 @@ mod tests {
             if x % BtcField::MODULUS == U256(0.into()) {
                 TestResult::discard()
             } else {
-                let x_e: FieldElement<BtcField, _> = x.into();
+                let x_e: FieldElement<BtcField> = x.into();
 
                 TestResult::from_bool(
                     BtcField::from_u64(1) / x_e ==
