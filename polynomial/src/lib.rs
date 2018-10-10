@@ -226,5 +226,26 @@ mod tests {
                 p.eval(x2) == y2.into()
             )
         }
+
+        fn multiplicative_identity(x1: u64, y1: u64, x2: u64, y2: u64) -> TestResult {
+            if y1 == y2 {
+                return TestResult::discard();
+            }
+
+            if x1 == x2 && y1 != y2 {
+                return TestResult::discard();
+            }
+
+            let mut p: TestPolynomial = TestPolynomial::interpolate(&[
+                (x1, y1), (x2, y2)
+            ]);
+
+            p = p * TestPolynomial::one();
+
+            TestResult::from_bool(
+                p.eval(x1) == y1.into() &&
+                p.eval(x2) == y2.into()
+            )
+        }
     }
 }
