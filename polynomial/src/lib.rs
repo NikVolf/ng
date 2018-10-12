@@ -8,6 +8,31 @@ extern crate ng_field as field;
 use std::ops::{Mul, Add};
 
 /// Represents polynomial on the finite field of members type T
+///
+/// # Examples
+///
+/// ```
+/// extern crate ng_field;
+/// extern crate ng_polynomial;
+///
+/// use ng_polynomial::Polynomial;
+/// use ng_field::{Field, FieldElement};
+///
+/// #[derive(Clone, Copy, PartialEq, Debug)]
+/// pub struct Mod1125899839733759Field;
+///
+/// impl Field for Mod1125899839733759Field {
+///     type Value = u64;
+///
+///     const MODULUS: u64 = 1125899839733759;
+///     const R: u64 = 1099511644160;
+///     const R_INVERSE: u64 = 343597359104;
+/// }
+///
+/// let polynomial = Polynomial::<FieldElement<Mod1125899839733759Field>>::new(vec![1]);
+/// assert_eq!(polynomial, Polynomial::<_>::one())
+///
+/// ```
 #[derive(Clone, PartialEq, Debug)]
 pub struct Polynomial<T: field::FieldValue> {
     coefs: Vec<T>,
@@ -67,6 +92,11 @@ impl<T: field::FieldValue> Polynomial<T> {
         }
 
         result
+    }
+
+    /// Turn polynomial into the array of degrees
+    pub fn into_coefs(self) -> Vec<T> {
+        self.coefs
     }
 }
 
