@@ -54,7 +54,7 @@ impl ModMul<u32> for u64 {
     }
 }
 
-impl Value for u64 {
+impl Scalar for u64 {
     fn one() -> u64 {
         1
     }

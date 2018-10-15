@@ -3,7 +3,7 @@
 use std::ops::{Add, Mul, Neg, Sub, Div};
 
 use field;
-use arith::{self, Value, ModAdd, ModMul, ModNeg, ModInv};
+use arith::{self, Scalar, ModAdd, ModMul, ModNeg, ModInv};
 
 /// Field element on the field F with value V
 #[repr(C)]
@@ -62,7 +62,7 @@ impl<F: field::Field> Div for FieldElement<F> {
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> From<V> for FieldElement<F>
+impl<F: field::Field<Value=V>, V: arith::Scalar> From<V> for FieldElement<F>
 {
     fn from(v: V) -> Self {
         FieldElement {

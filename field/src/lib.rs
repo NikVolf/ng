@@ -13,7 +13,7 @@ mod mont;
 mod test;
 
 pub use arith::{MulReduce, ModMul, ModAdd, ModInv, ModNeg};
-pub use arith::Value as Scalar;
+pub use arith::Scalar;
 pub use field::{Field, FieldValue};
 pub use element::FieldElement;
 pub use mont::MontgomeryElement;

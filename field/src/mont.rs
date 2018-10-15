@@ -2,7 +2,7 @@
 
 use std::ops::{Add, Mul, Neg, Sub, Div};
 
-use arith::{self, Value, ModAdd, ModMul, ModNeg, ModInv, MulReduce};
+use arith::{self, Scalar, ModAdd, ModMul, ModNeg, ModInv, MulReduce};
 use {field, element};
 
 /// Field element on the field F with value V in montgomery representation
@@ -100,7 +100,7 @@ impl<F: field::Field> Div for MontgomeryElement<F> {
     }
 }
 
-impl<F: field::Field<Value=V>, V: arith::Value> From<V> for MontgomeryElement<F>
+impl<F: field::Field<Value=V>, V: arith::Scalar> From<V> for MontgomeryElement<F>
 {
     fn from(val: V) -> Self {
         MontgomeryElement {

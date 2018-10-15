@@ -1,12 +1,12 @@
 //! Abstract field
 
 use std::ops::{Add, Mul, Sub, Div, Neg};
-use arith::Value;
+use arith::Scalar;
 
 /// Abstract field description
 pub trait Field: Copy + Clone + PartialEq + ::std::fmt::Debug {
     /// Type of scalar
-    type Value: Value;
+    type Value: Scalar;
     /// Field modulus
     const MODULUS: Self::Value;
     /// Field montgomery coefficient (R)
@@ -30,7 +30,7 @@ pub trait FieldValue:
     Neg<Output=Self>
 {
     /// Inner scalar value type of field element
-    type Value: Value;
+    type Value: Scalar;
 
     /// Squared field element
     fn squared(self) -> Self {

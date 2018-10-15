@@ -30,12 +30,12 @@ pub trait MulReduce {
     fn mul_reduce(self, other: Self, module: Self, r_inverse: Self) -> Self;
 }
 
-pub struct BitsIterator<'a, T: 'a + Value> {
+pub struct BitsIterator<'a, T: 'a + Scalar> {
     value: &'a T,
     position: usize,
 }
 
-impl<'a, T: 'a + Value> Iterator for BitsIterator<'a, T> {
+impl<'a, T: 'a + Scalar> Iterator for BitsIterator<'a, T> {
     type Item = bool;
 
     fn next(&mut self) -> Option<bool> {
@@ -49,7 +49,7 @@ impl<'a, T: 'a + Value> Iterator for BitsIterator<'a, T> {
 }
 
 /// Scalar interface
-pub trait Value:
+pub trait Scalar:
     Sized +
     Clone +
     Copy +
