@@ -6,7 +6,7 @@ extern crate ng_field as field;
 extern crate bigint;
 
 use uint::U256;
-use field::MontgomeryElement;
+use field::{MontgomeryElement, FieldValue};
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 struct P256Field;
@@ -54,7 +54,7 @@ impl P256Field {
 #[bench]
 fn simple(b: &mut test::Bencher) {
     let mut val = MontgomeryElement::from(P256Field::from_str("11"));
-    let multiplyer = MontgomeryElement::from(P256Field::from_str("13"));
+    let multiplyer = MontgomeryElement::from(P256Field::from_str("13")).pow(U256::from("55"));
     b.iter(|| {
         val = val * multiplyer;
     });
