@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Polynomial","Represents polynomial on the finite field of members type T"]]});

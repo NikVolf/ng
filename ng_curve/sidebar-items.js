@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["AffinePoint","Affine point on the curve C"],["JacobianPoint","Point on the curve C in jacobian representation"]],"trait":[["Curve","Generalization of a y^2 = x^2 + ax + b curve"]]});

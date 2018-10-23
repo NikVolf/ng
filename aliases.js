@@ -1,0 +1,12 @@
+var ALIASES = {};
+ALIASES['bigint'] = {};
+ALIASES['byteorder'] = {};
+ALIASES['crunchy'] = {};
+ALIASES['ng'] = {};
+ALIASES['ng_curve'] = {};
+ALIASES['ng_field'] = {};
+ALIASES['ng_p256'] = {};
+ALIASES['ng_polynomial'] = {};
+ALIASES['ng_secp256k1'] = {};
+ALIASES['ng_uint'] = {};
+ALIASES['rustc_hex'] = {};
